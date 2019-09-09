@@ -22,7 +22,7 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
  * Четырехзначное число назовем счастливым, если сумма первых двух ее цифр равна сумме двух последних.
  * Определить, счастливое ли заданное число, вернуть true, если это так.
  */
-fun isNumberHappy(number: Int): Boolean = number / 1000 + (number /100)%10 == (number/10)%10 + number %10
+fun isNumberHappy(number: Int): Boolean = number / 1000 + (number / 100) % 10 == (number / 10) % 10 + number % 10
 
 /**
  * Простая
@@ -32,7 +32,7 @@ fun isNumberHappy(number: Int): Boolean = number / 1000 + (number /100)%10 == (n
  * Считать, что ферзи не могут загораживать друг друга.
  */
 fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
-    (x1 == x2) || (y1==y2) || sqr(x2-x1) == sqr(y2-y1)
+    (x1 == x2) || (y1 == y2) || sqr(x2 - x1) == sqr(y2 - y1)
 
 
 /**
@@ -67,8 +67,7 @@ fun daysInMonth(month: Int, year: Int): Int = when (month) {
 fun circleInside(
     x1: Double, y1: Double, r1: Double,
     x2: Double, y2: Double, r2: Double
-): Boolean =
-     r2 >= sqrt(sqr(x2-x1)+ sqr(y2-y1)) + r1
+): Boolean = r2 >= sqrt(sqr(x2 - x1) + sqr(y2 - y1)) + r1
 
 
 /**
@@ -80,12 +79,11 @@ fun circleInside(
  * кирпич 4 х 4 х 4 пройдёт через отверстие 4 х 4.
  * Вернуть true, если кирпич пройдёт
  */
-fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean
-{
-    val l = min(min(a,b),c)
-    val w = max(max(a,b),c)
-    val h = a+b+c - l - w
-    val holeDim1 = min(r,s)
-    val holeDim2 = r+s - holeDim1
+fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
+    val l = minOf(a, b, c)
+    val w = maxOf(a, b, c)
+    val h = a + b + c - l - w
+    val holeDim1 = min(r, s)
+    val holeDim2 = r + s - holeDim1
     return l <= holeDim1 && h <= holeDim2
 }
