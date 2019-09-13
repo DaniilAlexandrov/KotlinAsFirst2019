@@ -4,7 +4,6 @@ package lesson2.task1
 
 import lesson1.task1.discriminant
 import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.sqrt
 
 /**
@@ -108,10 +107,12 @@ fun whichRookThreatens(
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
 ): Int {
-    if ((kingX == rookX1 || kingY == rookY1) && (kingY == rookY2 || kingX == rookX2)) return 3
-    if (kingX == rookX1 || kingY == rookY1) return 1
-    return if (kingY == rookY2 || kingX == rookX2) 2
-    else 0
+    return when {
+        ((kingX == rookX1 || kingY == rookY1) && (kingY == rookY2 || kingX == rookX2)) -> 3
+        (kingX == rookX1 || kingY == rookY1) -> 1
+        (kingY == rookY2 || kingX == rookX2) -> 2
+        else -> 0
+    }
 }
 
 /**
@@ -131,10 +132,12 @@ fun rookOrBishopThreatens(
 ): Int {
     val rookThreat = kingX == rookX || kingY == rookY
     val bishopThreat = ((kingX - kingY) == (bishopX - bishopY)) || ((kingX + kingY) == (bishopX + bishopY))
-    if (bishopThreat && rookThreat) return 3
-    if (rookThreat) return 1
-    return if (bishopThreat) 2
-    else 0
+    return when {
+        (bishopThreat && rookThreat) -> 3
+        (rookThreat) -> 1
+        (bishopThreat) -> 2
+        else -> 0
+    }
 }
 
 /**
@@ -165,6 +168,7 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
+// Исправлю это задание в следующих submit'ах, пока не могу придумать способ проще
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
     return when {
         c <= a && b <= d -> b - a

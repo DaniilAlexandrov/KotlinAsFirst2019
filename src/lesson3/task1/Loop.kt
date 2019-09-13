@@ -71,13 +71,10 @@ fun digitCountInNumber(n: Int, m: Int): Int =
 fun digitNumber(n: Int): Int {
     var res = 0
     var number = n
-    if (number == 0) {
-        number++
-    }
-    while (number != 0) {
+    do {
         number /= 10
         res++
-    }
+    } while (number != 0)
     return res
 }
 
@@ -91,12 +88,10 @@ fun digitNumber(n: Int): Int {
 fun fib(n: Int): Int {
     var a = 1
     var b = 1
-    var i = 0
-    while (i < n - 2) {
+    for (i in 1..n - 2) {
         val sum = a + b
         a = b
         b = sum
-        i++
     }
     return b
 }
@@ -117,7 +112,7 @@ fun lcm(m: Int, n: Int): Int {
             b -= a
         }
     }
-    return m * n / a
+    return m / a * n
 }
 
 
@@ -127,10 +122,11 @@ fun lcm(m: Int, n: Int): Int {
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    for (i in 2..n) {
+    val topValue = sqrt(n.toDouble()).toInt() + 1
+    for (i in 2..topValue) {
         if (n % i == 0) return i
     }
-    return 3
+    return n
 }
 
 /**
@@ -138,12 +134,7 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int {
-    for (i in n - 1 downTo 1) {
-        if (n % i == 0) return i
-    }
-    return 3
-}
+fun maxDivisor(n: Int): Int = n / minDivisor(n)
 
 /**
  * Простая
@@ -170,8 +161,7 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean {
     val num = floor(sqrt(n.toDouble())).toInt()
-    if (num * num in m..n) return true
-    return false
+    return num * num in m..n
 }
 
 /**
@@ -231,12 +221,11 @@ fun cos(x: Double, eps: Double): Double = TODO()
  */
 fun revert(n: Int): Int {
     var num = n
-    var powerNum = digitNumber(num) - 1
     var res = 0
     while (num != 0) {
-        res += (num % 10) * 10.0.pow(powerNum).toInt()
+        res *= 10
+        res += (num % 10)
         num /= 10
-        powerNum--
     }
     return res
 }
@@ -250,17 +239,8 @@ fun revert(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean {
-    var num = n
-    var powerNum = digitNumber(num) - 1
-    var res = 0
-    while (num != 0) {
-        res += (num % 10) * 10.0.pow(powerNum).toInt()
-        num /= 10
-        powerNum--
-    }
-    return res == n
-}
+fun isPalindrome(n: Int): Boolean = revert(n) == n
+
 
 /**
  * Средняя

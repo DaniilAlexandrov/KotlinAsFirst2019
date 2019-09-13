@@ -2,7 +2,6 @@
 
 package lesson1.task1
 
-import lesson3.task1.revert
 import kotlin.math.*
 
 /**
