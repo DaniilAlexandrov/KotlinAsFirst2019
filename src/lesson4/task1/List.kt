@@ -3,6 +3,8 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
+import kotlin.math.max
+import kotlin.math.pow
 import kotlin.math.sqrt
 
 /**
@@ -115,14 +117,20 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double = TODO()
+fun abs(v: List<Double>): Double = sqrt(v.fold(0.0) { previousElement, currentElement ->
+    previousElement + currentElement.pow(2)
+})
 
 /**
  * Простая
  *
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
-fun mean(list: List<Double>): Double = TODO()
+fun mean(list: List<Double>): Double {
+    return if (list.isEmpty()) 0.0 else {
+        (list.sum() / list.size)
+    }
+}
 
 /**
  * Средняя
@@ -132,7 +140,13 @@ fun mean(list: List<Double>): Double = TODO()
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun center(list: MutableList<Double>): MutableList<Double> = TODO()
+fun center(list: MutableList<Double>): MutableList<Double> {
+    val avg = (list.sum() / list.size)
+    for (i in list.indices) {
+        list[i] -= avg
+    }
+    return list
+}
 
 /**
  * Средняя
@@ -141,7 +155,14 @@ fun center(list: MutableList<Double>): MutableList<Double> = TODO()
  * представленные в виде списков a и b. Скалярное произведение считать по формуле:
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.
  */
-fun times(a: List<Int>, b: List<Int>): Int = TODO()
+fun times(a: List<Int>, b: List<Int>): Int {
+    var res = 0
+    return if (a.isEmpty() && b.isEmpty()) res else {
+        val greaterVector = max(a.size, b.size)
+        for (i in 0 until greaterVector) res += a[i] * b[i]
+        res
+    }
+}
 
 /**
  * Средняя
@@ -151,7 +172,17 @@ fun times(a: List<Int>, b: List<Int>): Int = TODO()
  * Коэффициенты многочлена заданы списком p: (p0, p1, p2, p3, ..., pN).
  * Значение пустого многочлена равно 0 при любом x.
  */
-fun polynom(p: List<Int>, x: Int): Int = TODO()
+fun polynom(p: List<Int>, x: Int): Int {
+    var res = 0
+    var aux = 1
+    if (p.isEmpty()) return res else {
+        for (i in p.indices) {
+            res += p[i] * aux
+            aux *= x
+        }
+    }
+    return res
+}
 
 /**
  * Средняя
@@ -163,7 +194,15 @@ fun polynom(p: List<Int>, x: Int): Int = TODO()
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun accumulate(list: MutableList<Int>): MutableList<Int> = TODO()
+
+fun accumulate(list: MutableList<Int>): MutableList<Int> {
+    var sum = 0
+    for (i in list.indices) {
+        list[i] += sum
+        sum = list[i]
+    }
+    return list
+}
 
 /**
  * Средняя
@@ -172,7 +211,18 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> = TODO()
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
-fun factorize(n: Int): List<Int> = TODO()
+fun factorize(n: Int): List<Int> {
+    var num = n
+    val res = mutableListOf<Int>()
+    var primeNum = 2
+    while (num > 1) {
+        if (num % primeNum == 0) {
+            res.add(primeNum)
+            num /= primeNum
+        } else primeNum++
+    }
+    return res
+}
 
 /**
  * Сложная
@@ -181,7 +231,7 @@ fun factorize(n: Int): List<Int> = TODO()
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String = TODO()
+fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*") { "$it" }
 
 /**
  * Средняя
@@ -190,7 +240,15 @@ fun factorizeToString(n: Int): String = TODO()
  * Результат перевода вернуть в виде списка цифр в base-ичной системе от старшей к младшей,
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
-fun convert(n: Int, base: Int): List<Int> = TODO()
+fun convert(n: Int, base: Int): List<Int> {
+    var num = n
+    val res = mutableListOf<Int>()
+    while (num > 0) {
+        res.add(num % base)
+        num /= base
+    }
+    return res.reversed()
+}
 
 /**
  * Сложная
@@ -203,7 +261,12 @@ fun convert(n: Int, base: Int): List<Int> = TODO()
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, n.toString(base) и подобные), запрещается.
  */
-fun convertToString(n: Int, base: Int): String = TODO()
+fun convertToString(n: Int, base: Int): String {
+    val alphabet = "abcdefghijklmnopqrstuvwxyz"
+    return convert(n, base).joinToString(
+        separator = "", transform = { if (it < 10) "$it" else alphabet[it - 10].toString() }
+    )
+}
 
 /**
  * Средняя
@@ -212,7 +275,15 @@ fun convertToString(n: Int, base: Int): String = TODO()
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int = TODO()
+fun decimal(digits: List<Int>, base: Int): Int {
+    var res = 0
+    var n = 1
+    for (i in digits.reversed()) {
+        res += i * n
+        n *= base
+    }
+    return res
+}
 
 /**
  * Сложная
@@ -226,7 +297,13 @@ fun decimal(digits: List<Int>, base: Int): Int = TODO()
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, str.toInt(base)), запрещается.
  */
-fun decimalFromString(str: String, base: Int): Int = TODO()
+fun decimalFromString(str: String, base: Int): Int {
+    val list = mutableListOf<Int>()
+    for (char in str)
+        if (char.isDigit()) list.add(char.toInt() - 48)
+        else list.add(char - 'a' + 10)
+    return decimal(list, base)
+}
 
 /**
  * Сложная
