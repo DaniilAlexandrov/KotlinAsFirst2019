@@ -156,10 +156,9 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.
  */
 fun times(a: List<Int>, b: List<Int>): Int {
-    var res = 0
-    return if (a.isEmpty() && b.isEmpty()) res else {
-        val greaterVector = max(a.size, b.size)
-        for (i in 0 until greaterVector) res += a[i] * b[i]
+    return if (a.isEmpty() || b.isEmpty()) 0 else {
+        var res = 0
+        for (i in a.indices) res += a[i] * b[i]
         res
     }
 }
