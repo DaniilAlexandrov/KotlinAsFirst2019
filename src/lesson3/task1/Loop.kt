@@ -199,7 +199,25 @@ fun collatzSteps(x: Int): Int {
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
-fun sin(x: Double, eps: Double): Double = TODO()
+fun sin(x: Double, eps: Double): Double {
+    var res = 0.0
+    var factorial = 1.0
+    var factorialArgument = 1
+    var sign = 1
+    var num = abs(x) % (2 * PI)
+    if (x < 0) num = -num
+    val powerIncrement = num * num
+    var actualNumber = num
+    while (abs(actualNumber) >= eps) {
+        res += actualNumber * sign
+        sign = -sign
+        num *= powerIncrement
+        factorialArgument += 2
+        factorial *= factorialArgument * (factorialArgument - 1)
+        actualNumber = num / factorial
+    }
+    return res
+}
 
 /**
  * Средняя
@@ -210,7 +228,26 @@ fun sin(x: Double, eps: Double): Double = TODO()
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
-fun cos(x: Double, eps: Double): Double = TODO()
+fun cos(x: Double, eps: Double): Double {
+    var res = 0.0
+    var factorial = 1.0
+    var factorialArgument = 0
+    var sign = 1
+    var num = abs(x) % (2 * PI)
+    if (x < 0) num = -num
+    val powerIncrement = num * num
+    num = 1.0
+    var actualNumber = num
+    while (abs(actualNumber) >= eps) {
+        res += actualNumber * sign
+        sign = -sign
+        num *= powerIncrement
+        factorialArgument += 2
+        factorial *= factorialArgument * (factorialArgument - 1)
+        actualNumber = num / factorial
+    }
+    return res
+}
 
 /**
  * Средняя
