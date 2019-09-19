@@ -143,7 +143,7 @@ fun maxDivisor(n: Int): Int = n / minDivisor(n)
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean = m * n / lcm(m, n) == 1
+fun isCoPrime(m: Int, n: Int): Boolean = lcm(m, n) == m * n
 
 /**
  * Простая
@@ -198,7 +198,10 @@ fun sin(x: Double, eps: Double): Double {
     var factorialArgument = 1
     var sign = 1
     var num = x % (2 * PI)
-    if (x < 0) num = -num
+    if (x < 0) {
+        num = -num
+        sign = -sign
+    }
     val powerIncrement = num * num
     var actualNumber = num
     while (abs(actualNumber) >= eps) {
