@@ -4,6 +4,7 @@ package lesson2.task1
 
 import lesson1.task1.discriminant
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sqrt
 
 /**
@@ -107,10 +108,12 @@ fun whichRookThreatens(
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
 ): Int {
+    val firstRookThreat = (kingX == rookX1 || kingY == rookY1)
+    val secondRookThreat = (kingY == rookY2 || kingX == rookX2)
     return when {
-        ((kingX == rookX1 || kingY == rookY1) && (kingY == rookY2 || kingX == rookX2)) -> 3
-        (kingX == rookX1 || kingY == rookY1) -> 1
-        (kingY == rookY2 || kingX == rookX2) -> 2
+        firstRookThreat && secondRookThreat -> 3
+        firstRookThreat -> 1
+        secondRookThreat -> 2
         else -> 0
     }
 }
@@ -149,13 +152,13 @@ fun rookOrBishopThreatens(
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
-    val maxone = maxOf(a, b, c)
-    val minone = minOf(a, b, c)
-    val middle = a + b + c - maxone - minone
+    val maxOne = maxOf(a, b, c)
+    val minOne = minOf(a, b, c)
+    val middle = a + b + c - maxOne - minOne
     return when {
-        minone + middle <= maxone -> -1
-        sqrt(minone * minone + middle * middle) > maxone -> 0
-        sqrt(minone * minone + middle * middle) == maxone -> 1
+        minOne + middle <= maxOne -> -1
+        sqrt(minOne * minOne + middle * middle) > maxOne -> 0
+        sqrt(minOne * minOne + middle * middle) == maxOne -> 1
         else -> 2
     }
 }
@@ -168,14 +171,9 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-// Исправлю это задание в следующих submit'ах, пока не могу придумать способ проще
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
-    return when {
-        c <= a && b <= d -> b - a
-        c in a..b && b <= d -> b - c
-        a in c..d && d <= b -> d - a
-        c in a..d && d <= b -> d - c
-        b < c || a > d -> -1
-        else -> 0
-    }
+    val minDeterminant = min(b, d)
+    val maxDeterminant = max(a, c)
+    if ((b < c) || (d < a)) return -1
+    return minDeterminant - maxDeterminant
 }
