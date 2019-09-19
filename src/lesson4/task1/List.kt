@@ -3,7 +3,6 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
-import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -117,8 +116,8 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double = sqrt(v.fold(0.0) { previousElement, currentElement ->
-    previousElement + currentElement.pow(2)
+fun abs(v: List<Double>): Double = sqrt(v.fold(0.0) { currentSum, currentElement ->
+    currentSum + currentElement.pow(2)
 })
 
 /**
@@ -141,10 +140,8 @@ fun mean(list: List<Double>): Double {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
-    val avg = (list.sum() / list.size)
-    for (i in list.indices) {
-        list[i] -= avg
-    }
+    val avg = mean(list)
+    for (i in 0 until list.size) list[i] -= avg
     return list
 }
 
@@ -156,11 +153,9 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.
  */
 fun times(a: List<Int>, b: List<Int>): Int {
-    return if (a.isEmpty() || b.isEmpty()) 0 else {
-        var res = 0
-        for (i in a.indices) res += a[i] * b[i]
-        res
-    }
+    var res = 0
+    for (i in a.indices) res += a[i] * b[i]
+    return res
 }
 
 /**
@@ -174,11 +169,9 @@ fun times(a: List<Int>, b: List<Int>): Int {
 fun polynom(p: List<Int>, x: Int): Int {
     var res = 0
     var aux = 1
-    if (p.isEmpty()) return res else {
-        for (i in p.indices) {
-            res += p[i] * aux
-            aux *= x
-        }
+    for (i in p.indices) {
+        res += p[i] * aux
+        aux *= x
     }
     return res
 }
@@ -213,12 +206,12 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
 fun factorize(n: Int): List<Int> {
     var num = n
     val res = mutableListOf<Int>()
-    var primeNum = 2
+    var multiplier = 2
     while (num > 1) {
-        if (num % primeNum == 0) {
-            res.add(primeNum)
-            num /= primeNum
-        } else primeNum++
+        if (num % multiplier == 0) {
+            res.add(multiplier)
+            num /= multiplier
+        } else multiplier++
     }
     return res
 }
@@ -299,7 +292,7 @@ fun decimal(digits: List<Int>, base: Int): Int {
 fun decimalFromString(str: String, base: Int): Int {
     val list = mutableListOf<Int>()
     for (char in str)
-        if (char.isDigit()) list.add(char.toInt() - 48)
+        if (char.isDigit()) list.add(char.toString().toInt())
         else list.add(char - 'a' + 10)
     return decimal(list, base)
 }
@@ -312,32 +305,32 @@ fun decimalFromString(str: String, base: Int): Int {
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-// Решено с помощью информации из урока 5
+
+val numberMap = mapOf(
+    "M" to 1000,
+    "CM" to 900,
+    "D" to 500,
+    "CD" to 400,
+    "C" to 100,
+    "XC" to 90,
+    "L" to 50,
+    "XL" to 40,
+    "X" to 10,
+    "IX" to 9,
+    "V" to 5,
+    "IV" to 4,
+    "I" to 1
+)
 fun roman(n: Int): String {
-    val exemplarTable = mapOf(
-        "M" to 1000,
-        "CM" to 900,
-        "D" to 500,
-        "CD" to 400,
-        "C" to 100,
-        "XC" to 90,
-        "L" to 50,
-        "XL" to 40,
-        "X" to 10,
-        "IX" to 9,
-        "V" to 5,
-        "IV" to 4,
-        "I" to 1
-    )
     var arabNum = n
-    var res = ""
-    for ((romNumber, value) in exemplarTable) {
+    val res = mutableListOf<String>()
+    for ((romNumber, value) in numberMap) {
         while (arabNum / value > 0) {
             arabNum -= value
-            res += romNumber
+            res.add(romNumber)
         }
     }
-    return res
+    return res.joinToString(separator = "")
 }
 
 /**
