@@ -253,12 +253,9 @@ fun convert(n: Int, base: Int): List<Int> {
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, n.toString(base) и подобные), запрещается.
  */
-fun convertToString(n: Int, base: Int): String {
-    val alphabet = "abcdefghijklmnopqrstuvwxyz"
-    return convert(n, base).joinToString(
-        separator = "", transform = { if (it < 10) "$it" else alphabet[it - 10].toString() }
-    )
-}
+fun convertToString(n: Int, base: Int): String = convert(n, base).joinToString(separator = "", transform =
+{ if (it <= 9) "$it" else ('a' + it - 10).toString() })
+
 
 /**
  * Средняя
@@ -321,6 +318,7 @@ val numberMap = mapOf(
     "IV" to 4,
     "I" to 1
 )
+
 fun roman(n: Int): String {
     var arabNum = n
     val res = mutableListOf<String>()

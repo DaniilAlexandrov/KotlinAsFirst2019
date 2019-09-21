@@ -2,7 +2,6 @@
 
 package lesson3.task1
 
-import lesson1.task1.sqr
 import kotlin.math.*
 
 /**
@@ -301,21 +300,23 @@ fun hasDifferentDigits(n: Int): Boolean {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int {
-    var sequence = 0
+fun sequenceDigitNumber(n: Int, action: (Int) -> Int): Int {
+    var sum = 0
     var digit = 1
-    while (sequence < n) {
-        sequence += digitNumber(sqr(digit))
+    while (sum < n) {
+        sum += digitNumber(action(digit))
         digit++
     }
-    var gap = sequence - n
-    var digSquared = sqr(digit - 1)
+    var gap = sum - n
+    var digChanged = action(digit - 1)
     while (gap > 0) {
-        digSquared /= 10
+        digChanged /= 10
         gap--
     }
-    return digSquared % 10
+    return digChanged % 10
 }
+
+fun squareSequenceDigit(n: Int): Int = sequenceDigitNumber(n) { it * it }
 
 /**
  * Сложная
@@ -326,18 +327,4 @@ fun squareSequenceDigit(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int {
-    var sequence = 0
-    var number = 1
-    while (sequence < n) {
-        sequence += digitNumber(fib(number))
-        number++
-    }
-    var gap = sequence - n
-    var numberFib = fib(number - 1)
-    while (gap > 0) {
-        numberFib /= 10
-        gap--
-    }
-    return numberFib % 10
-}
+fun fibSequenceDigit(n: Int): Int = sequenceDigitNumber(n) { fib(it)}
