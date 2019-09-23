@@ -103,7 +103,7 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
         for ((name, actualGrade) in grades) {
             if (actualGrade == i) nameList.add(name)
         }
-        if (nameList.size != 0) res[i] = nameList
+        res[i] = nameList
     }
     return res
 }
