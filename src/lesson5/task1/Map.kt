@@ -129,7 +129,7 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean = b == b
  *   subtractOf(a = mutableMapOf("a" to "z"), mapOf("a" to "z"))
  *     -> a changes to mutableMapOf() aka becomes empty
  */
-fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit {
+fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
     for ((key, value) in b) {
         a.remove(key, value)
     }
@@ -211,14 +211,14 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  */
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
     var res = ""
-    var cheapest = -10.0
+    var cheapest: Double? = null
     for ((item, desc) in stuff) {
-        if ((desc.first == kind) && ((cheapest == -10.0) || (desc.second < cheapest))) {
+        if ((desc.first == kind) && ((cheapest == null) || (desc.second < cheapest))) {
             cheapest = desc.second
             res = item
         }
     }
-    return if (cheapest != -10.0) res else null
+    return if (cheapest != null) res else null
 }
 
 /**
@@ -320,13 +320,14 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    for (i in list.indices) {
-        val numberToSearch = number - list[i]
-        if ((numberToSearch in list) && (list.indexOf(numberToSearch) != i))
-            return Pair(
-                list.indexOf(min(list[i], numberToSearch)),
-                list.indexOf(max(list[i], numberToSearch))
-            )
+    var numberToSearch: Int
+    for (i in 0 until list.size - 1) {
+        for (j in (i + 1) until list.size) {
+            numberToSearch = list.sorted()[i] + list.sorted()[j]
+            if (numberToSearch == number)
+                return Pair(list.indexOf(list.sorted()[i]), list.indexOf(list.sorted()[j]))
+            if (numberToSearch > number) break
+        }
     }
     return Pair(-1, -1)
 }

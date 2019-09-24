@@ -169,8 +169,8 @@ fun times(a: List<Int>, b: List<Int>): Int {
 fun polynom(p: List<Int>, x: Int): Int {
     var res = 0
     var aux = 1
-    for (i in p.indices) {
-        res += p[i] * aux
+    for (element in p) {
+        res += element * aux
         aux *= x
     }
     return res
@@ -289,8 +289,7 @@ fun decimal(digits: List<Int>, base: Int): Int {
 fun decimalFromString(str: String, base: Int): Int {
     val list = mutableListOf<Int>()
     for (char in str)
-        if (char.isDigit()) list.add(char.toString().toInt())
-        else list.add(char - 'a' + 10)
+        if (char.isDigit()) list.add(char - '0') else list.add(char - 'a' + 10)
     return decimal(list, base)
 }
 
