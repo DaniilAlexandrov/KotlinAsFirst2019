@@ -4,6 +4,7 @@ package lesson6.task1
 
 import lesson2.task2.daysInMonth
 import java.lang.Exception
+import java.lang.IllegalArgumentException
 import java.lang.NumberFormatException
 import kotlin.math.max
 
@@ -96,7 +97,7 @@ fun dateStrToDigit(str: String): String {
         val day = parts[0].toInt()
         val month = if (parts[1] !in monthList) return "" else monthList.indexOf(parts[1]) + 1
         return if ((year < 0) || (day < 0) || (day > daysInMonth(month, year))) ""
-        else "%02d.%02d.%02d".format(day, month, year)
+        else "%02d.%02d.%d".format(day, month, year)
     } catch (e: Exception) {
         return ""
     }
@@ -204,6 +205,7 @@ fun plusMinus(expression: String): Int {
     val parts = expression.split(" ")
     var sign = 1
     var res = 0
+    require(expression.isNotEmpty())
     for (i in parts.indices) {
         if (i % 2 == 0) {
             require(parts[i].all { it in '0'..'9' })
