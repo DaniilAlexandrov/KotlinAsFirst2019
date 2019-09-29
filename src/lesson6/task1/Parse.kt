@@ -116,12 +116,10 @@ fun dateStrToDigit(str: String): String {
 fun dateDigitToStr(digital: String): String {
     val parts = digital.split(".")
     try {
-        if (parts.size != 3) return ""
         val year = parts[2].toInt()
         val month = parts[1].toInt()
         val day = parts[0].toInt()
-        if (month !in 1..12) return ""
-        if (day > daysInMonth(month, year)) return ""
+        if ((day > daysInMonth(month, year)) || (month !in 1..12) || (parts.size != 3)) return ""
         return String.format("%d %s %d", day, monthList[month - 1], year)
     } catch (e: Exception) {
         return ""
@@ -186,8 +184,8 @@ fun bestLongJump(jumps: String): Int {
 fun bestHighJump(jumps: String): Int {
     val parts = jumps.split(" ")
     val numbersToChooseFrom = mutableSetOf<Int>()
-    val loopLimit = parts.size - 1
-    for (i in 1..loopLimit step 2) {
+    val loopLimit = parts.size
+    for (i in 1 until loopLimit step 2) {
         if (parts[i].contains("+")) numbersToChooseFrom.add(parts[i - 1].toInt())
     }
     return if (numbersToChooseFrom.isNotEmpty()) numbersToChooseFrom.max()!!.toInt() else -1
@@ -232,12 +230,12 @@ fun plusMinus(expression: String): Int {
 fun firstDuplicateIndex(str: String): Int {
     val parts = str.split(" ")
     var res = 0
-    var actualElement = ""
+    var currentElement = ""
     for (element in parts) {
         val nextElement = element.toLowerCase()
-        if (actualElement == nextElement) return res - 1
-        res += actualElement.length
-        actualElement = nextElement
+        if (currentElement == nextElement) return res - 1
+        res += currentElement.length
+        currentElement = nextElement
         res += 1
     }
     return -1
@@ -257,7 +255,7 @@ fun firstDuplicateIndex(str: String): Int {
 fun mostExpensive(description: String): String {
     val parts = description.split("; ")
     var res = ""
-    var maxPrice = -10.0
+    var maxPrice = -10.0 //Некоторое значение, которое при любом корректном вводе меньше результата.
     if (description.isEmpty()) return res
     for (element in parts) {
         val currentElementPrice = element.split(" ")[1].toDouble()
