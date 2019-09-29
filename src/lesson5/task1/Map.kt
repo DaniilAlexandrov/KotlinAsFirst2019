@@ -2,9 +2,6 @@
 
 package lesson5.task1
 
-import kotlin.math.max
-import kotlin.math.min
-
 /**
  * Пример
  *
