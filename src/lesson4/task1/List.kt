@@ -253,8 +253,13 @@ fun convert(n: Int, base: Int): List<Int> {
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, n.toString(base) и подобные), запрещается.
  */
-fun convertToString(n: Int, base: Int): String = convert(n, base).joinToString(separator = "", transform =
-{ if (it <= 9) "$it" else ('a' + it - 10).toString() })
+fun convertToString(n: Int, base: Int): String =
+    convert(n, base).joinToString(separator = "", transform =
+    {
+        if (it <= 9) "$it"
+        else ('a' + it - 10).toString()
+    }
+    )
 
 
 /**

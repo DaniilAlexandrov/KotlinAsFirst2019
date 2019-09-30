@@ -327,4 +327,4 @@ fun squareSequenceDigit(n: Int): Int = sequenceDigitNumber(n) { it * it }
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = sequenceDigitNumber(n) { fib(it)}
+fun fibSequenceDigit(n: Int): Int = sequenceDigitNumber(n) { fib(it) }
