@@ -215,7 +215,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
             res = item
         }
     }
-    return res //if (cheapest != null) res else null
+    return res
 }
 
 /**
@@ -308,15 +308,10 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    var numberToSearch: Int
-    val listToSearchFrom = list.sorted()
-    for (i in 0 until list.size - 1) {
-        for (j in (i + 1) until list.size) {
-            numberToSearch = listToSearchFrom[i] + listToSearchFrom[j]
-            if (numberToSearch == number)
-                return Pair(list.indexOf(listToSearchFrom[i]), list.indexOf(listToSearchFrom[j]))
-            if (numberToSearch > number) break
-        }
+    val listToSearchFrom = list.sorted().size
+    for (i in 0 until listToSearchFrom - 1) {
+        for (j in (i + 1) until listToSearchFrom)
+            if (list[j] + list[i] == number) return Pair(i, j)
     }
     return Pair(-1, -1)
 }
