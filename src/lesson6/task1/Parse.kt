@@ -205,7 +205,7 @@ fun plusMinus(expression: String): Int {
     val parts = expression.split(" ")
     var sign = 1
     var res = 0
-    require(expression.isNotEmpty())
+    require(expression.isNotEmpty() && expression.toList().toSet().first() != ' ')
     for (i in parts.indices) {
         if (i % 2 == 0) {
             require(parts[i].all { it in '0'..'9' })
