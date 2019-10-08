@@ -321,8 +321,6 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
             max(numberIndexMap[numberToSearch]!!, i)
         )
         else numberIndexMap[list[i]] = i
-
-
     }
     return Pair(-1, -1)
 }
