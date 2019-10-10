@@ -344,4 +344,56 @@ fun fromRoman(roman: String): Int {
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    val allowedLength = 0 until cells
+    var position = cells / 2
+    val list = mutableListOf<Int>()
+    var aux = 0 // Вспомогательная переменная, используемая при действиях
+    var commandCounter = 0
+    var commandIndex = 0
+
+    for (char in commands) {
+        when (char) {
+            '[' -> aux++
+            ']' -> aux--
+        }
+        require(aux >= 0)
+    }
+    require(aux == 0)
+
+    for (i in allowedLength) list.add(0)
+
+    while ((commandCounter < limit) && (commandIndex < commands.length)) {
+        when (commands[commandIndex]) {
+            '>' -> position++
+            '<' -> position--
+            '+' -> list[position]++
+            '-' -> list[position]--
+            ' ' -> {
+            }
+            '[' -> if (list[position] == 0) {
+                aux = 1
+                while (aux > 0) {
+                    commandIndex++
+                    if (commands[commandIndex] == '[') aux++
+                    else if (commands[commandIndex] == ']') aux--
+                }
+            }
+
+            ']' -> if (list[position] != 0) {
+                aux = 1
+                while (aux > 0) {
+                    commandIndex--
+                    if (commands[commandIndex] == ']') aux++
+                    else if (commands[commandIndex] == '[') aux--
+                }
+            }
+            else -> throw IllegalArgumentException()
+        }
+        commandIndex++
+        commandCounter++
+    }
+    check(position in allowedLength)
+    return list
+}
