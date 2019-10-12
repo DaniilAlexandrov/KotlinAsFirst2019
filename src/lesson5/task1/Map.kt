@@ -368,11 +368,11 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         }
     }
     fun tableFiller(a: Int, b: Int) {    // Рекурсия, определяющая, входит ли предмет в рюкзак.
-        if (table[a][b] == 0) return     // Нулевая ячейка - проскаю её.
+        if (table[a][b] == 0) return     // Нулевая ячейка - пропускаю её.
         if (table[a - 1][b] == table[a][b]) tableFiller(a - 1, b)  // Соседние элементы равны - предмет не подходит.
         else {
-            tableFiller(a - 1, b - weightList[a - 1]) // Иначе рассматриваю следующий предмет.
-            res = res + (namesList[a - 1]) // И добавляю текущий в результат.
+            res = res + (namesList[a - 1]) // Соседние элементы не равны - предмет подходит, записываю его в результат.
+            tableFiller(a - 1, b - weightList[a - 1]) // И рассматриваю следующий предмет.
         }
     }
     tableFiller(treasureAmount - 1, capacity) // Рекурсия для текущего случая.
