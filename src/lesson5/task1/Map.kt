@@ -311,7 +311,6 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    if (list.isEmpty()) return Pair(-1, -1)
     val loopLimit = list.size
     val numberIndexMap = mutableMapOf<Int, Int>()
     for (i in 0 until loopLimit) {
@@ -346,4 +345,36 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    var res = setOf<String>()
+    val treasureAmount = treasures.size + 1
+    val weightList = mutableListOf<Int>() // Списки характеристик предметов и их заполнение.
+    val priceList = mutableListOf<Int>()
+    val namesList = mutableListOf<String>()
+    treasures.forEach { weightList.add(it.value.first) }
+    treasures.forEach { priceList.add(it.value.second) }
+    treasures.forEach { namesList.add(it.key) }
+    val table = Array(treasureAmount) { Array(capacity + 1) { 0 } }
+    for (i in 0 until capacity + 1) table[0][i] = 0
+    for (i in 0 until treasureAmount) table[i][0] = 0 // Таблица, изначально заполненная нулями.
+
+    for (i in 1 until treasureAmount) { // Прохожу через всю таблицу используя специальную огромную формулу.
+        val currentWeight = weightList[i - 1]
+        val currentPrice = priceList[i - 1]
+        for (j in 1 until capacity + 1) {
+            if (currentWeight <= j) table[i][j] =
+                max(table[i - 1][j], table[i - 1][j - currentWeight] + currentPrice)
+            else table[i][j] = table[i - 1][j]
+        }
+    }
+    fun tableFiller(a: Int, b: Int) {    // Рекурсия, определяющая, входит ли предмет в рюкзак.
+        if (table[a][b] == 0) return     // Нулевая ячейка - проскаю её.
+        if (table[a - 1][b] == table[a][b]) tableFiller(a - 1, b)  // Соседние элементы равны - предмет не подходит.
+        else {
+            tableFiller(a - 1, b - weightList[a - 1]) // Иначе рассматриваю следующий предмет.
+            res = res + (namesList[a - 1]) // И добавляю текущий в результат.
+        }
+    }
+    tableFiller(treasureAmount - 1, capacity) // Рекурсия для текущего случая.
+    return res
+}
