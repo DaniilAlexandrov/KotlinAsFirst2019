@@ -365,6 +365,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     for (i in allowedLength) list.add(0)
 
     while ((commandCounter < limit) && (commandIndex < commands.length)) {
+        check(position in allowedLength)
         when (commands[commandIndex]) {
             '>' -> position++
             '<' -> position--
