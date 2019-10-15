@@ -358,7 +358,6 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             '[' -> aux++
             ']' -> aux--
         }
-        require(aux >= 0)
     }
     require(aux == 0)
 
