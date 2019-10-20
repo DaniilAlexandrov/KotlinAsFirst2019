@@ -349,10 +349,17 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     val allowedLength = 0 until cells
     var position = cells / 2
     val list = MutableList(cells) { 0 }
-    var aux: Int // Вспомогательная переменная, используемая при действиях
+    var aux = 0 // Вспомогательная переменная, используемая при действиях
     var commandCounter = 0
     var commandIndex = 0
-    require(commands.count { it == '[' } == commands.count { it == ']' })
+    for (symbol in commands) {
+        when (symbol) {
+            '[' -> aux++
+            ']' -> aux--
+        }
+        require(aux >= 0)
+    }
+    require(aux == 0)
 
     while ((commandCounter < limit) && (commandIndex < commands.length)) {
         check(position in allowedLength)
