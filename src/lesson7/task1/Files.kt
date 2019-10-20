@@ -136,7 +136,7 @@ fun centerFile(inputName: String, outputName: String) {
         longestOne = max(longestOne, line.length)
     }
     File(outputName).bufferedWriter().use {
-        if (resList.size == 1) it.write(resList[1])
+        if (resList.size == 1) it.write(resList[0])
         for (element in 0 until resList.size) {
             val currentElementLength = resList[element].length
             val numberOfSpacesToAdd = (longestOne - currentElementLength) / 2
