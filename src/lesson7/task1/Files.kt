@@ -56,14 +56,20 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> { /*
+fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val res = mutableMapOf<String, Int>()
-    val lines = File(inputName).readLines()
+    val text = File(inputName).readText().toLowerCase()
     for (aux in substrings) res[aux] = 0
-    for (line in lines) {
-
+    // Прохожу по всему тексту и ищу каждый ключ ассоциативного массива.
+    // Если такой есть - увеличиваю значение соотвествующего ключа и начинаю поиск со следующего знака.
+    for (symbolToSearch in res.keys) {
+        var suitableIndex = text.indexOf(symbolToSearch.toLowerCase(), 0)
+        while (suitableIndex > 0) { // Условие существования подходящего индекса.
+            res[symbolToSearch] = res[symbolToSearch]!! + 1
+            suitableIndex = text.indexOf(symbolToSearch.toLowerCase(), suitableIndex + 1)
+        }
     }
-    return res */ TODO()
+    return res
 }
 
 
@@ -136,13 +142,14 @@ fun centerFile(inputName: String, outputName: String) {
         longestOne = max(longestOne, line.length)
     }
     File(outputName).bufferedWriter().use {
-        for (element in 0 until resList.size) {
-            val currentElementLength = resList[element].length
-            val numberOfSpacesToAdd = (longestOne - currentElementLength) / 2
-            for (i in 1..numberOfSpacesToAdd) it.write(" ")
-            it.write(resList[element])
-            it.newLine()
-        }
+        if (resList.size == 1) it.write(resList[0]) else
+            for (element in 0 until resList.size) {
+                val currentElementLength = resList[element].length
+                val numberOfSpacesToAdd = (longestOne - currentElementLength) / 2
+                for (i in 1..numberOfSpacesToAdd) it.write(" ")
+                it.write(resList[element])
+                it.newLine()
+            }
     }
 }
 
@@ -289,9 +296,9 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
                 val lowerCasedChar = char.toLowerCase()
                 if (lowerCasedChar in mapOfReplacements.keys) {
                     val replacement = mapOfReplacements[lowerCasedChar]!!
-                    if (char in 'A'..'Z' || char in 'А'..'Я')
-                        it.write(replacement.capitalize())
-                    else it.write(replacement)
+                    if (char in 'a'..'z' || char in 'а'..'я')
+                        it.write(replacement)
+                    else it.write(replacement.capitalize())
                 } else it.write(lowerCasedChar.toString())
             }
             it.newLine()
@@ -527,42 +534,32 @@ fun markdownToHtml(inputName: String, outputName: String) {
 2350
  *
  */
-fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) { /* You gotta build 'em all.
+fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
     val res = lhv * rhv
-    val resLength = res.toString().length
-    val multiplicandLength = lhv.toString().length
-    val multiplierLength = rhv.toString().length
-    var divisionAuxNumber = rhv
+    val resLength = digitNumber(res) + 1
+    val multiplicandLength = digitNumber(lhv)
+    val multiplierLength = digitNumber(rhv)
+    val tempMultiplicationRes = rhv % 10 * lhv
+    var loopVar = rhv / 10 // Нужна, чтобы считать автоматически выводить все нужные суммы, начиная со второй.
+    var requiredSpacesNumber = resLength - digitNumber(tempMultiplicationRes) - 2
     File(outputName).bufferedWriter().use {
-        for (i in 0..resLength - multiplicandLength)
-            it.write(" ")
-        it.write(lhv.toString())
-        it.newLine()
-        it.write("*")
-        for (i in 1..resLength - multiplierLength)
-            it.write(" ")
-        it.write(rhv.toString())
-        it.newLine()
-        for (i in 0..resLength)
-            it.write("-")
-        it.newLine()
-        while (divisionAuxNumber > 0) {
-            val tempMultiplicationRes = divisionAuxNumber % 10 * lhv
-            var spaceCounter = 2
-            divisionAuxNumber /= 10
-            for (i in 0..resLength - digitNumber(tempMultiplicationRes) - spaceCounter) {
-                it.write("+")
-                it.newLine()
-                it.write(tempMultiplicationRes)
-                spaceCounter++
-            }
+        it.write(" ".repeat(resLength - multiplicandLength))
+        it.write(lhv.toString() + "\n")
+        it.write("*" + " ".repeat(resLength - multiplierLength - 1))
+        it.write(rhv.toString() + "\n")
+        it.write("-".repeat(resLength) + "\n")
+        it.write(" ".repeat(resLength - digitNumber(tempMultiplicationRes)))
+        it.write(tempMultiplicationRes.toString() + "\n") // Первая сумма выводится руками.
+        while (loopVar > 0) {
+            val incomingSum = loopVar % 10 * lhv
+            it.write("+" + " ".repeat(requiredSpacesNumber))
+            it.write((incomingSum).toString() + "\n") // Incoming respective sum.
+            requiredSpacesNumber -= digitNumber(loopVar / 10 % 10 * lhv) - digitNumber(incomingSum) + 1
+            loopVar /= 10
         }
-        for (i in 0..resLength)
-            it.write("-")
-        it.newLine()
+        it.write("-".repeat(resLength) + "\n")
         it.write(" $res")
-    } */
-    TODO()
+    }
 }
 
 
