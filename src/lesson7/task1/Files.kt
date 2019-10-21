@@ -142,7 +142,7 @@ fun centerFile(inputName: String, outputName: String) {
         longestOne = max(longestOne, line.length)
     }
     File(outputName).bufferedWriter().use {
-        if (resList.size == 1) it.write(resList[0]) else
+        if (resList.size == 1) it.write(resList[0]) else {
             for (element in 0 until resList.size) {
                 val currentElementLength = resList[element].length
                 val numberOfSpacesToAdd = (longestOne - currentElementLength) / 2
@@ -150,6 +150,7 @@ fun centerFile(inputName: String, outputName: String) {
                 it.write(resList[element])
                 it.newLine()
             }
+        }
     }
 }
 
@@ -299,7 +300,7 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
                     if (char in 'a'..'z' || char in 'а'..'я')
                         it.write(replacement)
                     else it.write(replacement.capitalize())
-                } else it.write(lowerCasedChar.toString())
+                } else it.write(char.toString())
             }
             it.newLine()
         }
