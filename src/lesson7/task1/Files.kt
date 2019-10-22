@@ -57,6 +57,14 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  *
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    val text = File(inputName).readText().toLowerCase()
+    val res = mutableMapOf<String, Int>()
+    for (aux in substrings) res[aux] = 0
+    for (substring in substrings) {
+        text.groupBy { text.contains(substring) }
+    }
+    return res
+/*
     val res = mutableMapOf<String, Int>()
     val text = File(inputName).readText().toLowerCase()
     for (aux in substrings) res[aux] = 0
@@ -64,12 +72,12 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
     // Если такой есть - увеличиваю значение соотвествующего ключа и начинаю поиск со следующего знака.
     for (symbolToSearch in res.keys) {
         var suitableIndex = text.indexOf(symbolToSearch.toLowerCase(), 0)
-        while (suitableIndex > 0) { // Условие существования подходящего индекса.
+        while (suitableIndex > -1) { // Условие существования подходящего индекса.
             res[symbolToSearch] = res[symbolToSearch]!! + 1
             suitableIndex = text.indexOf(symbolToSearch.toLowerCase(), suitableIndex + 1)
         }
     }
-    return res
+    return res */
 }
 
 
@@ -543,6 +551,7 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
     val tempMultiplicationRes = rhv % 10 * lhv
     var loopVar = rhv / 10 // Нужна, чтобы считать автоматически выводить все нужные суммы, начиная со второй.
     var requiredSpacesNumber = resLength - digitNumber(tempMultiplicationRes) - 2
+    if (lhv < 10) requiredSpacesNumber-- // Котоед намекнул, что это так.
     File(outputName).bufferedWriter().use {
         it.write(" ".repeat(resLength - multiplicandLength))
         it.write(lhv.toString() + "\n")

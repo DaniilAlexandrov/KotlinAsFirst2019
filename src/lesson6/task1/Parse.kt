@@ -157,19 +157,10 @@ fun flattenPhoneNumber(phone: String): String =
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int {
-    val parts = jumps.split(" ")
-    var bestJump = -10  //Некоторое значение, которое при любом корректном вводе меньше результата.
-    for (element in parts) {
-        if ((element != "-") && (element != "%"))
-            try {
-                bestJump = if (bestJump == -10) element.toInt() else max(bestJump, element.toInt())
-            } catch (e: NumberFormatException) {
-                return -1
-            }
-    }
-    return if (bestJump != -10) bestJump else -1
-}
+fun bestLongJump(jumps: String): Int =
+    if (jumps.matches(Regex("""\d+(\s\d+)|(\s([-%]))*""")))
+        jumps.split(" ").filter { it != "-" && it != "%" }.max()!!.toInt()
+    else -1
 
 /**
  * Сложная
@@ -260,6 +251,7 @@ fun mostExpensive(description: String): String {
     var maxPrice = -10.0 //Некоторое значение, которое при любом корректном вводе меньше результата.
     if (description.isEmpty()) return res
     for (element in parts) {
+        if (element.split(" ").size != 2) return ""
         val currentElementPrice = element.split(" ")[1].toDouble()
         val currentElementName = element.split(" ")[0]
         if (currentElementPrice < 0) return ""
