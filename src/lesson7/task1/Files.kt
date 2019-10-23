@@ -57,14 +57,6 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  *
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
-    val text = File(inputName).readText().toLowerCase()
-    val res = mutableMapOf<String, Int>()
-    for (aux in substrings) res[aux] = 0
-    for (substring in substrings) {
-        text.groupBy { text.contains(substring) }
-    }
-    return res
-/*
     val res = mutableMapOf<String, Int>()
     val text = File(inputName).readText().toLowerCase()
     for (aux in substrings) res[aux] = 0
@@ -77,7 +69,7 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
             suitableIndex = text.indexOf(symbolToSearch.toLowerCase(), suitableIndex + 1)
         }
     }
-    return res */
+    return res
 }
 
 
@@ -106,21 +98,21 @@ fun sibilants(inputName: String, outputName: String) {
     )
     val replacementCondition = listOf('ж', 'Ж', 'ч', 'Ч', 'ш', 'Ш', 'щ', 'Щ')
     val lines = File(inputName).readLines()
-    File(outputName).bufferedWriter().use {
-        for (line in lines) {
-            it.write(line[0].toString())
-            for (letter in 1 until line.length) {
-                val currentLetter = line[letter]
-                val previousLetter = line[letter - 1]
-                if (
-                    (previousLetter in replacementCondition) &&
-                    currentLetter in replacementLetters.keys
-                )
-                    it.write(replacementLetters[currentLetter] ?: error(""))
-                else it.write(currentLetter.toString())
-            }
-            it.newLine()
+    val builder = StringBuilder()
+    for (line in lines) {
+        builder.append(line[0].toString())
+        for (letter in 1 until line.length) {
+            val currentLetter = line[letter]
+            val previousLetter = line[letter - 1]
+            if (
+                (previousLetter in replacementCondition) &&
+                currentLetter in replacementLetters.keys
+            )
+                builder.append(replacementLetters[currentLetter])
+            else builder.append(currentLetter.toString())
         }
+        builder.append('\n')
+        File(outputName).writeText(builder.toString())
     }
 }
 
@@ -145,21 +137,17 @@ fun centerFile(inputName: String, outputName: String) {
     val lines = File(inputName).readLines()
     val resList = mutableListOf<String>() // Лист, из которого формируется результат.
     var longestOne = 0
+    val builder = StringBuilder()
     for (line in lines) {
         resList.add(line.trim())
         longestOne = max(longestOne, line.length)
     }
-    File(outputName).bufferedWriter().use {
-        if (resList.size == 1) it.write(resList[0]) else {
-            for (element in 0 until resList.size) {
-                val currentElementLength = resList[element].length
-                val numberOfSpacesToAdd = (longestOne - currentElementLength) / 2
-                for (i in 1..numberOfSpacesToAdd) it.write(" ")
-                it.write(resList[element])
-                it.newLine()
-            }
-        }
+    for (element in resList) {
+        val numberOfSpacesToAdd = (longestOne - element.length) / 2
+        builder.append(" ".repeat(numberOfSpacesToAdd))
+        builder.append(element + '\n')
     }
+    File(outputName).writeText(builder.toString())
 }
 
 /**
@@ -197,37 +185,36 @@ fun alignFileByWidth(inputName: String, outputName: String) {
     var sumOfAddedSpaces = 0
     var numberOfSpacesToAdd = 0
     var longestLineLength = 0
+    val builder = StringBuilder()
     for (line in lines) {
         resList.add(line)
         if (line.length > longestLineLength) longestLineLength = line.length
     }
-    File(outputName).bufferedWriter().use {
-        for (line in resList) {
-            var outputString = ""
-            val wordList = line.split(" ").toMutableList()
-            // Если условия проверки выполняются, в результат печатается строка без изменений (пункты 2 и 3)
-            if ((line.length == longestLineLength) || (wordList.size <= 1)) {
-                it.write(line)
-            } else {
-                // Иначе считается количество символов без пробелов и с конца собирается строка для вывода
-                val charLength = Regex(""" """).replace(line, "").length
-                outputString = wordList[wordList.size - 1]
-                for (word in wordList.size - 2 downTo 0) {
-                    sumOfAddedSpaces += numberOfSpacesToAdd
-                    numberOfSpacesToAdd = (longestLineLength - charLength - sumOfAddedSpaces) / (word + 1)
-                    outputString =
-                        wordList[word].padEnd(numberOfSpacesToAdd + wordList[word].length) + outputString
-                    //padEnd заменяет цикл с добавлением пробелов, к которому я не смог придумать рабочее условие.
-                }
+    for (line in resList) {
+        var outputString = ""
+        val wordList = line.split(" ").toMutableList()
+        // Если условия проверки выполняются, в результат печатается строка без изменений (пункты 2 и 3)
+        if ((line.length == longestLineLength) || (wordList.size <= 1)) {
+            builder.append(line)
+        } else {
+            // Иначе считается количество символов без пробелов и с конца собирается строка для вывода
+            val charLength = Regex(""" """).replace(line, "").length
+            outputString = wordList[wordList.size - 1]
+            for (word in wordList.size - 2 downTo 0) {
+                sumOfAddedSpaces += numberOfSpacesToAdd
+                numberOfSpacesToAdd = (longestLineLength - charLength - sumOfAddedSpaces) / (word + 1)
+                outputString =
+                    wordList[word].padEnd(numberOfSpacesToAdd + wordList[word].length) + outputString
+                //padEnd заменяет цикл с добавлением пробелов, к которому я не смог придумать рабочее условие.
             }
-            // Обнуление всех использованных для пробелов переменных при переходе на новую строку
-            sumOfAddedSpaces = 0
-            numberOfSpacesToAdd = 0
-            it.write(outputString)
-            it.newLine()
         }
-    }
+        // Обнуление всех использованных для пробелов переменных при переходе на новую строку
+        sumOfAddedSpaces = 0
+        numberOfSpacesToAdd = 0
+        builder.append(outputString + '\n')
 
+    }
+    File(outputName).writeText(builder.toString())
 }
 
 /**
@@ -297,22 +284,22 @@ fun top20Words(inputName: String): Map<String, Int> {
 fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: String) {
     val mapOfReplacements = mutableMapOf<Char, String>()
     val lines = File(inputName).readLines()
-    File(outputName).bufferedWriter().use {
-        for ((key, value) in dictionary)
-            mapOfReplacements[key.toLowerCase()] = value.toLowerCase()
-        for (line in lines) {
-            for (char in line) {
-                val lowerCasedChar = char.toLowerCase()
-                if (lowerCasedChar in mapOfReplacements.keys) {
-                    val replacement = mapOfReplacements[lowerCasedChar]!!
-                    if (char in 'a'..'z' || char in 'а'..'я')
-                        it.write(replacement)
-                    else it.write(replacement.capitalize())
-                } else it.write(char.toString())
-            }
-            it.newLine()
+    val builder = StringBuilder()
+    for ((key, value) in dictionary)
+        mapOfReplacements[key.toLowerCase()] = value.toLowerCase()
+    for (line in lines) {
+        for (char in line) {
+            val lowerCasedChar = char.toLowerCase()
+            if (lowerCasedChar in mapOfReplacements.keys) {
+                val replacement = mapOfReplacements[lowerCasedChar]!!
+                if (char in 'a'..'z' || char in 'а'..'я')
+                    builder.append(replacement)
+                else builder.append(replacement.capitalize())
+            } else builder.append(char.toString().toLowerCase())
         }
+        builder.append('\n')
     }
+    File(outputName).writeText(builder.toString())
 }
 
 /**
@@ -343,15 +330,15 @@ fun chooseLongestChaoticWord(inputName: String, outputName: String) {
     val lines = File(inputName).readLines()
     val resList = mutableListOf<String>() //Лист всех подходящих слов, из которого формируется ответ.
     var longestOne = 0
-    File(outputName).bufferedWriter().use {
-        for (line in lines) {
-            if (line.toLowerCase().toSet().size == line.length) { // Слова с разными буквами
-                resList.add(line)
-                if (line.length >= longestOne) longestOne = line.length
-            }
+    val builder = StringBuilder()
+    for (line in lines) {
+        if (line.toLowerCase().toSet().size == line.length) { // Слова с разными буквами
+            resList.add(line)
+            if (line.length >= longestOne) longestOne = line.length
         }
-        it.write(resList.filter { it1 -> it1.length == longestOne }.joinToString(separator = ", "))
     }
+    builder.append(resList.filter { it1 -> it1.length == longestOne }.joinToString(separator = ", "))
+    File(outputName).writeText(builder.toString())
 }
 
 /**
@@ -545,31 +532,29 @@ fun markdownToHtml(inputName: String, outputName: String) {
  */
 fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
     val res = lhv * rhv
+    val builder = StringBuilder()
     val resLength = digitNumber(res) + 1
     val multiplicandLength = digitNumber(lhv)
     val multiplierLength = digitNumber(rhv)
     val tempMultiplicationRes = rhv % 10 * lhv
     var loopVar = rhv / 10 // Нужна, чтобы считать автоматически выводить все нужные суммы, начиная со второй.
     var requiredSpacesNumber = resLength - digitNumber(tempMultiplicationRes) - 2
-    if (lhv < 10) requiredSpacesNumber-- // Котоед намекнул, что это так.
-    File(outputName).bufferedWriter().use {
-        it.write(" ".repeat(resLength - multiplicandLength))
-        it.write(lhv.toString() + "\n")
-        it.write("*" + " ".repeat(resLength - multiplierLength - 1))
-        it.write(rhv.toString() + "\n")
-        it.write("-".repeat(resLength) + "\n")
-        it.write(" ".repeat(resLength - digitNumber(tempMultiplicationRes)))
-        it.write(tempMultiplicationRes.toString() + "\n") // Первая сумма выводится руками.
-        while (loopVar > 0) {
-            val incomingSum = loopVar % 10 * lhv
-            it.write("+" + " ".repeat(requiredSpacesNumber))
-            it.write((incomingSum).toString() + "\n") // Incoming respective sum.
-            requiredSpacesNumber -= digitNumber(loopVar / 10 % 10 * lhv) - digitNumber(incomingSum) + 1
-            loopVar /= 10
-        }
-        it.write("-".repeat(resLength) + "\n")
-        it.write(" $res")
+    builder.append(" ".repeat(resLength - multiplicandLength))
+    builder.append(lhv.toString() + "\n")
+    builder.append("*" + " ".repeat(resLength - multiplierLength - 1))
+    builder.append(rhv.toString() + "\n")
+    builder.append("-".repeat(resLength) + "\n")
+    builder.append(" ".repeat(resLength - digitNumber(tempMultiplicationRes)))
+    builder.append(tempMultiplicationRes.toString() + "\n") // Первая сумма выводится руками.
+    while (loopVar > 0) {
+        val incomingSum = loopVar % 10 * lhv
+        builder.append("+" + " ".repeat(requiredSpacesNumber))
+        builder.append((incomingSum).toString() + "\n")// Incoming respective sum.
+        requiredSpacesNumber -= digitNumber(loopVar / 10 % 10 * lhv) - digitNumber(incomingSum) + 1
+        loopVar /= 10
     }
+    builder.append("-".repeat(resLength) + "\n" + " $res")
+    File(outputName).writeText(builder.toString())
 }
 
 
