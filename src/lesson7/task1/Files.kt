@@ -100,7 +100,7 @@ fun sibilants(inputName: String, outputName: String) {
     val lines = File(inputName).readLines()
     val builder = StringBuilder()
     for (line in lines) {
-        if (File(inputName).readText().isNotEmpty()) builder.append(line[0].toString())
+        builder.append(line[0].toString())
         for (letter in 1 until line.length) {
             val currentLetter = line[letter]
             val previousLetter = line[letter - 1]
@@ -108,7 +108,7 @@ fun sibilants(inputName: String, outputName: String) {
                 (previousLetter in replacementCondition) &&
                 currentLetter in replacementLetters.keys
             )
-                builder.append(replacementLetters[currentLetter])
+                builder.append(replacementLetters[currentLetter] ?: error(""))
             else builder.append(currentLetter.toString())
         }
         builder.append('\n')
@@ -137,9 +137,10 @@ fun centerFile(inputName: String, outputName: String) {
     val lines = File(inputName).readLines()
     val resList = mutableListOf<String>() // Лист, из которого формируется результат.
     val builder = StringBuilder()
-    val longestOne = (lines.maxBy { it.trim().length })!!.length
+    var longestOne = 0
     for (line in lines) {
         resList.add(line.trim())
+        if (line.isNotEmpty()) longestOne = max(longestOne, line.length) else error("")
     }
     for (line in resList) {
         val numberOfSpacesToAdd = (longestOne - line.length) / 2
