@@ -100,7 +100,7 @@ fun sibilants(inputName: String, outputName: String) {
     val lines = File(inputName).readLines()
     val builder = StringBuilder()
     for (line in lines) {
-        builder.append(line[0].toString())
+        if (File(inputName).readText().isNotEmpty()) builder.append(line[0].toString())
         for (letter in 1 until line.length) {
             val currentLetter = line[letter]
             val previousLetter = line[letter - 1]
@@ -136,16 +136,14 @@ fun sibilants(inputName: String, outputName: String) {
 fun centerFile(inputName: String, outputName: String) {
     val lines = File(inputName).readLines()
     val resList = mutableListOf<String>() // Лист, из которого формируется результат.
-    var longestOne = 0
     val builder = StringBuilder()
+    val longestOne = (lines.maxBy { it.trim().length })!!.length
     for (line in lines) {
         resList.add(line.trim())
-        longestOne = max(longestOne, line.length)
     }
-    for (element in resList) {
-        val numberOfSpacesToAdd = (longestOne - element.length) / 2
-        builder.append(" ".repeat(numberOfSpacesToAdd))
-        builder.append(element + '\n')
+    for (line in resList) {
+        val numberOfSpacesToAdd = (longestOne - line.length) / 2
+        builder.append(" ".repeat(numberOfSpacesToAdd) + line + '\n')
     }
     File(outputName).writeText(builder.toString())
 }
@@ -292,10 +290,10 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
             val lowerCasedChar = char.toLowerCase()
             if (lowerCasedChar in mapOfReplacements.keys) {
                 val replacement = mapOfReplacements[lowerCasedChar]!!
-                if (char in 'a'..'z' || char in 'а'..'я')
+                if (char.isLowerCase())
                     builder.append(replacement)
                 else builder.append(replacement.capitalize())
-            } else builder.append(char.toString().toLowerCase())
+            } else builder.append(char)
         }
         builder.append('\n')
     }
