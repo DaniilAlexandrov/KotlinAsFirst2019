@@ -98,21 +98,21 @@ fun sibilants(inputName: String, outputName: String) {
     )
     val replacementCondition = listOf('ж', 'Ж', 'ч', 'Ч', 'ш', 'Ш', 'щ', 'Щ')
     val lines = File(inputName).readLines()
-    val builder = StringBuilder()
-    for (line in lines) {
-        builder.append(line[0].toString())
-        for (letter in 1 until line.length) {
-            val currentLetter = line[letter]
-            val previousLetter = line[letter - 1]
-            if (
-                (previousLetter in replacementCondition) &&
-                currentLetter in replacementLetters.keys
-            )
-                builder.append(replacementLetters[currentLetter] ?: error(""))
-            else builder.append(currentLetter.toString())
+    File(outputName).bufferedWriter().use {
+        for (line in lines) {
+            it.append(line[0].toString())
+            for (letter in 1 until line.length) {
+                val currentLetter = line[letter]
+                val previousLetter = line[letter - 1]
+                if (
+                    (previousLetter in replacementCondition) &&
+                    currentLetter in replacementLetters.keys
+                )
+                    it.append(replacementLetters[currentLetter] ?: error(""))
+                else it.append(currentLetter.toString())
+            }
+            it.newLine()
         }
-        builder.append('\n')
-        File(outputName).writeText(builder.toString())
     }
 }
 
@@ -140,7 +140,7 @@ fun centerFile(inputName: String, outputName: String) {
     var longestOne = 0
     for (line in lines) {
         resList.add(line.trim())
-        if (line.isNotEmpty()) longestOne = max(longestOne, line.length) else error("")
+        longestOne = max(longestOne, line.length)
     }
     for (line in resList) {
         val numberOfSpacesToAdd = (longestOne - line.length) / 2
@@ -288,13 +288,13 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
         mapOfReplacements[key.toLowerCase()] = value.toLowerCase()
     for (line in lines) {
         for (char in line) {
-            val lowerCasedChar = char.toLowerCase()
-            if (lowerCasedChar in mapOfReplacements.keys) {
-                val replacement = mapOfReplacements[lowerCasedChar]!!
+            //val lowerCasedChar = char.toLowerCase()
+            if (mapOfReplacements.keys.contains(char.toLowerCase())) {
+                //val replacement = mapOfReplacements[lowerCasedChar]!!
                 if (char.isLowerCase())
-                    builder.append(replacement)
-                else builder.append(replacement.capitalize())
-            } else builder.append(char)
+                    builder.append(mapOfReplacements[char.toLowerCase()]!!)
+                else builder.append(mapOfReplacements[char.toLowerCase()]!!.capitalize())
+            } else builder.append(char.toString().toLowerCase())
         }
         builder.append('\n')
     }
