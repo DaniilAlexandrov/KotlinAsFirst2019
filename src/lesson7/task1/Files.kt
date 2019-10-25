@@ -139,7 +139,7 @@ fun centerFile(inputName: String, outputName: String) {
     val builder = StringBuilder()
     var longestOne = 0
     for (line in lines) {
-        resList.add(line.trim())
+        resList.add(line.trim() )
         longestOne = max(longestOne, line.trim().length)
     }
     for (line in resList) {
