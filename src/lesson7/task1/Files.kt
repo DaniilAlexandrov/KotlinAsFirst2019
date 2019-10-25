@@ -143,7 +143,7 @@ fun centerFile(inputName: String, outputName: String) {
         longestOne = max(longestOne, line.length)
     }
     for (line in resList) {
-        val numberOfSpacesToAdd = (longestOne - line.length) / 2
+        val numberOfSpacesToAdd = (longestOne - line.trim().length) / 2
         builder.append(" ".repeat(numberOfSpacesToAdd) + line + '\n')
     }
     File(outputName).writeText(builder.toString())
@@ -291,9 +291,9 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
             //val lowerCasedChar = char.toLowerCase()
             if (mapOfReplacements.keys.contains(char.toLowerCase())) {
                 //val replacement = mapOfReplacements[lowerCasedChar]!!
-                if (char.isLowerCase())
+                if (char.isLowerCase()) {
                     builder.append(mapOfReplacements[char.toLowerCase()]!!)
-                else builder.append(mapOfReplacements[char.toLowerCase()]!!.capitalize())
+                } else builder.append(mapOfReplacements[char.toLowerCase()]!!.capitalize())
             } else builder.append(char.toString().toLowerCase())
         }
         builder.append('\n')
@@ -535,22 +535,21 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
     val resLength = digitNumber(res) + 1
     val multiplicandLength = digitNumber(lhv)
     val multiplierLength = digitNumber(rhv)
-    val tempMultiplicationRes = rhv % 10 * lhv
-    var loopVar = rhv / 10 // Нужна, чтобы считать автоматически выводить все нужные суммы, начиная со второй.
-    var requiredSpacesNumber = resLength - digitNumber(tempMultiplicationRes) - 2
-    builder.append(" ".repeat(resLength - multiplicandLength))
-    builder.append(lhv.toString() + "\n")
-    builder.append("*" + " ".repeat(resLength - multiplierLength - 1))
-    builder.append(rhv.toString() + "\n")
+    var dividableNum = rhv
+    var tempMultiplicationRes = dividableNum % 10 * lhv
+    var requiredSpaceNumber = 2
+    builder.append(" ".repeat(resLength - multiplicandLength) + lhv.toString() + "\n")
+    builder.append("*" + " ".repeat(resLength - multiplierLength - 1) + rhv.toString() + "\n")
     builder.append("-".repeat(resLength) + "\n")
     builder.append(" ".repeat(resLength - digitNumber(tempMultiplicationRes)))
     builder.append(tempMultiplicationRes.toString() + "\n") // Первая сумма выводится руками.
-    while (loopVar > 0) {
-        val incomingSum = loopVar % 10 * lhv
-        builder.append("+" + " ".repeat(requiredSpacesNumber))
-        builder.append((incomingSum).toString() + "\n")// Incoming respective sum.
-        requiredSpacesNumber -= digitNumber(loopVar / 10 % 10 * lhv) - digitNumber(incomingSum) + 1
-        loopVar /= 10
+    dividableNum /= 10
+    while (dividableNum > 0) {
+        tempMultiplicationRes = dividableNum % 10 * lhv
+        builder.append("+" + " ".repeat(resLength - digitNumber(tempMultiplicationRes) - requiredSpaceNumber))
+        builder.append((tempMultiplicationRes).toString() + "\n") // Incoming respective sum.
+        requiredSpaceNumber++
+        dividableNum /= 10
     }
     builder.append("-".repeat(resLength) + "\n" + " $res")
     File(outputName).writeText(builder.toString())
