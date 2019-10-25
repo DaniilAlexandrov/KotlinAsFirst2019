@@ -140,10 +140,10 @@ fun centerFile(inputName: String, outputName: String) {
     var longestOne = 0
     for (line in lines) {
         resList.add(line.trim())
-        longestOne = max(longestOne, line.length)
+        longestOne = max(longestOne, line.trim().length)
     }
     for (line in resList) {
-        val numberOfSpacesToAdd = (longestOne - line.trim().length) / 2
+        val numberOfSpacesToAdd = (longestOne - line.length) / 2
         builder.append(" ".repeat(numberOfSpacesToAdd) + line + '\n')
     }
     File(outputName).writeText(builder.toString())
