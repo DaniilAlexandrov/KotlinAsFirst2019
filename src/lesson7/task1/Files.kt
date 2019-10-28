@@ -203,7 +203,7 @@ fun alignFileByWidth(inputName: String, outputName: String) {
                 sumOfAddedSpaces += numberOfSpacesToAdd
                 numberOfSpacesToAdd = (longestLineLength - charLength - sumOfAddedSpaces) / (word + 1)
                 outputString =
-                    wordList[word].padEnd(numberOfSpacesToAdd + wordList[word].length) + outputString
+                    wordList[word].padEnd(numberOfSpacesToAdd + wordList[word].length).plus(outputString)
                 //padEnd заменяет цикл с добавлением пробелов, к которому я не смог придумать рабочее условие.
             }
         }
@@ -288,13 +288,13 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
         mapOfReplacements[key.toLowerCase()] = value.toLowerCase()
     for (line in lines) {
         for (char in line) {
-            //val lowerCasedChar = char.toLowerCase()
-            if (mapOfReplacements.keys.contains(char.toLowerCase())) {
-                //val replacement = mapOfReplacements[lowerCasedChar]!!
+            val lowerCasedChar = char.toLowerCase()
+            if (mapOfReplacements.keys.contains(lowerCasedChar)) {
+                val replacement = mapOfReplacements[lowerCasedChar]!!
                 if (char.isLowerCase()) {
-                    builder.append(mapOfReplacements[char.toLowerCase()]!!)
-                } else builder.append(mapOfReplacements[char.toLowerCase()]!!.capitalize())
-            } else builder.append(char.toString().toLowerCase())
+                    builder.append(replacement)
+                } else builder.append(replacement.capitalize())
+            } else builder.append(lowerCasedChar)
         }
         builder.append('\n')
     }
