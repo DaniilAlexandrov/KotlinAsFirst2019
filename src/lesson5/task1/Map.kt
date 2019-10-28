@@ -354,7 +354,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     treasures.forEach { priceList.add(it.value.second) }
     treasures.forEach { namesList.add(it.key) }
     val table = Array(treasureAmount) { Array(capacity + 1) { 0 } } // Таблица, изначально заполненная нулями.
-    for (i in 1 until treasureAmount) {// Прохожу через всю таблицу используя специальную огромную формулу.
+    for (i in 1 until treasureAmount) { // Прохожу через всю таблицу используя специальную огромную формулу.
         val currentWeight = weightList[i - 1]
         val currentPrice = priceList[i - 1]
         for (j in 1 until capacity + 1) {

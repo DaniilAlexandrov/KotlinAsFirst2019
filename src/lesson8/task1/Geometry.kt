@@ -209,7 +209,7 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
     var minDistance = Double.POSITIVE_INFINITY
     var minIndexPair = Pair(0, 0)
     for (i in 0 until circles.size - 1)
-        for (j in i + 1 until circles.size) {
+        for (j in i + 1 until circles.size) { 
             val currentDistance = circles[i].distance(circles[j])
             if (currentDistance < minDistance) {
                 minIndexPair = Pair(i, j)
