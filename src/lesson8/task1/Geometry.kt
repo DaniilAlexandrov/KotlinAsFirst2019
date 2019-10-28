@@ -174,18 +174,20 @@ class Line private constructor(
  *
  * Построить прямую по отрезку
  */
-fun lineBySegment(s: Segment): Line {
-    val k = (s.end.y - s.begin.y) / (s.end.x - s.begin.x)
-    return Line(s.begin, atan(k) % PI)
-}
+fun lineBySegment(s: Segment): Line = lineByPoints(s.begin, s.end)//{
+// val k = (s.end.y - s.begin.y) / (s.end.x - s.begin.x)
+// return Line(s.begin, atan(k) % PI)
+//}
 
 /**
  * Средняя
  *
  * Построить прямую по двум точкам
  */
-fun lineByPoints(a: Point, b: Point): Line = lineBySegment(Segment(a, b))
-
+fun lineByPoints(a: Point, b: Point): Line {//= lineBySegment(Segment(a, b))
+    val k = (b.y - a.y) / (b.x - a.x)
+    return Line(a, atan(k) % PI)
+}
 
 /**
  * Сложная
@@ -195,7 +197,7 @@ fun lineByPoints(a: Point, b: Point): Line = lineBySegment(Segment(a, b))
 fun bisectorByPoints(a: Point, b: Point): Line {
     val desirableAngle = atan((b.y - a.y) / (b.x - a.x)) + PI / 2
     val applicationPoint = Point((b.x + a.x) / 2, (b.y + a.y) / 2)
-    return Line(applicationPoint, desirableAngle)
+    return Line(applicationPoint, desirableAngle % PI)
 }
 
 /**
@@ -209,7 +211,7 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
     var minDistance = Double.POSITIVE_INFINITY
     var minIndexPair = Pair(0, 0)
     for (i in 0 until circles.size - 1)
-        for (j in i + 1 until circles.size) { 
+        for (j in i + 1 until circles.size) {
             val currentDistance = circles[i].distance(circles[j])
             if (currentDistance < minDistance) {
                 minIndexPair = Pair(i, j)
