@@ -3,7 +3,6 @@
 package lesson8.task1
 
 import lesson1.task1.sqr
-import java.lang.IllegalArgumentException
 import kotlin.math.*
 
 /**
@@ -107,15 +106,20 @@ data class Segment(val begin: Point, val end: Point) {
  * Дано множество точек. Вернуть отрезок, соединяющий две наиболее удалённые из них.
  * Если в множестве менее двух точек, бросить IllegalArgumentException
  */
+// Copy pasted with minor adjustments from nearestCirclePair
 fun diameter(vararg points: Point): Segment {
     require(points.size > 1)
-    var longestSegment = Segment(Point(0.0, 0.0), Point(0.0, 0.0))
-    val longestSegmentDistance = longestSegment.begin.distance(longestSegment.end)
+    var maxDistance = Double.NEGATIVE_INFINITY
+    var minIndexPair = Pair(0, 0)
     for (i in 0 until points.size - 1)
-        for (j in i + 1 until points.size)
-            if (points[i].distance(points[j]) > longestSegmentDistance)
-                longestSegment = Segment(points[i], points[j])
-    return longestSegment
+        for (j in i + 1 until points.size) {
+            val currentDistance = points[i].distance(points[j])
+            if (currentDistance > maxDistance) {
+                minIndexPair = Pair(i, j)
+                maxDistance = currentDistance
+            }
+        }
+    return Segment(points[minIndexPair.first], points[minIndexPair.second])
 }
 
 /**
