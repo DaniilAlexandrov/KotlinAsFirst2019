@@ -3,6 +3,7 @@
 package lesson8.task1
 
 import lesson1.task1.sqr
+import java.lang.IllegalArgumentException
 import kotlin.math.*
 
 /**
@@ -186,7 +187,9 @@ fun lineBySegment(s: Segment): Line = lineByPoints(s.begin, s.end)//{
  */
 fun lineByPoints(a: Point, b: Point): Line {//= lineBySegment(Segment(a, b))
     val k = (b.y - a.y) / (b.x - a.x)
-    return Line(a, atan(k) % PI)
+    return if (b.x == a.x) Line(a, atan(k) % PI)
+    else Line(b, PI / 2)
+
 }
 
 /**
@@ -232,8 +235,8 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
  */
 fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
     val abPerpendicular = bisectorByPoints(a, b)
-    val bcPerpendicular = bisectorByPoints(b, c)
-    val circleCenter = abPerpendicular.crossPoint(bcPerpendicular)
+    val acPerpendicular = bisectorByPoints(a, c)
+    val circleCenter = abPerpendicular.crossPoint(acPerpendicular)
     val circleRadius = circleCenter.distance(a)
     return Circle(circleCenter, circleRadius)
 }
