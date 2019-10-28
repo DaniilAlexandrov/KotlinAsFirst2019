@@ -294,7 +294,7 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
                 if (char.isLowerCase()) {
                     builder.append(replacement)
                 } else builder.append(replacement.capitalize())
-            } else builder.append(char)
+            } else builder.append(lowerCasedChar)
         }
         builder.append('\n')
     }
