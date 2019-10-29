@@ -57,19 +57,14 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  *
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
-    val res = mutableMapOf<String, Int>()
+    val map = mutableMapOf<String, Int>()
     val text = File(inputName).readText().toLowerCase()
-    for (aux in substrings) res[aux] = 0
-    // Прохожу по всему тексту и ищу каждый ключ ассоциативного массива.
-    // Если такой есть - увеличиваю значение соотвествующего ключа и начинаю поиск со следующего знака.
-    for (symbolToSearch in res.keys) {
-        var suitableIndex = text.indexOf(symbolToSearch.toLowerCase(), 0)
-        while (suitableIndex > -1) { // Условие существования подходящего индекса.
-            res[symbolToSearch] = res[symbolToSearch]!! + 1
-            suitableIndex = text.indexOf(symbolToSearch.toLowerCase(), suitableIndex + 1)
-        }
-    }
-    return res
+    substrings.groupBy { substring ->
+        text.windowed(substring.length).filter {
+            it == substring.toLowerCase()
+        }.size
+    }.forEach { (occurrence, strings) -> strings.forEach { map[it] = occurrence } }
+    return map
 }
 
 
