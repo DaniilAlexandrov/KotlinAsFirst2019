@@ -288,9 +288,9 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
         for (char in line) {
             if (mapOfReplacements.containsKey(char.toLowerCase())) {
                 val replacement = mapOfReplacements[char.toLowerCase()]
-                if (char.isLowerCase()) {
-                    builder.append(replacement)
-                } else builder.append(replacement!!.capitalize())
+                if (char.isUpperCase()) {
+                    builder.append(replacement!!.capitalize())
+                } else builder.append(replacement)
             } else builder.append(char)
         }
         builder.append('\n')
