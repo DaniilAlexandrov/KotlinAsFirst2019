@@ -191,9 +191,8 @@ fun lineBySegment(s: Segment): Line = lineByPoints(s.begin, s.end)//{
  */
 fun lineByPoints(a: Point, b: Point): Line {//= lineBySegment(Segment(a, b))
     val k = (b.y - a.y) / (b.x - a.x)
-    return if (b.x == a.x) Line(a, PI / 2)
+    return if (k < 0) Line(a, (2 * PI + atan(k)) % PI)
     else Line(a, atan(k) % PI)
-
 }
 
 /**

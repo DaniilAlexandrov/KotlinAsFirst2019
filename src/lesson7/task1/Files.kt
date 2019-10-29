@@ -98,22 +98,22 @@ fun sibilants(inputName: String, outputName: String) {
     )
     val replacementCondition = listOf('ж', 'Ж', 'ч', 'Ч', 'ш', 'Ш', 'щ', 'Щ')
     val lines = File(inputName).readLines()
-    File(outputName).bufferedWriter().use {
-        for (line in lines) {
-            it.append(line[0].toString())
-            for (letter in 1 until line.length) {
-                val currentLetter = line[letter]
-                val previousLetter = line[letter - 1]
-                if (
-                    (previousLetter in replacementCondition) &&
-                    currentLetter in replacementLetters.keys
-                )
-                    it.append(replacementLetters[currentLetter] ?: error(""))
-                else it.append(currentLetter.toString())
-            }
-            it.newLine()
+    val builder = StringBuilder()
+    for (line in lines) {
+        builder.append(line[0].toString())
+        for (letter in 1 until line.length) {
+            val currentLetter = line[letter]
+            val previousLetter = line[letter - 1]
+            if (
+                (previousLetter in replacementCondition) &&
+                currentLetter in replacementLetters.keys
+            )
+                builder.append(replacementLetters[currentLetter] ?: error(""))
+            else builder.append(currentLetter.toString())
         }
+        builder.append("\n")
     }
+    File(outputName).writeText(builder.toString())
 }
 
 /**
@@ -281,20 +281,17 @@ fun top20Words(inputName: String): Map<String, Int> {
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: String) {
-    val mapOfReplacements = mutableMapOf<Char, String>()
     val lines = File(inputName).readLines()
     val builder = StringBuilder()
-    for ((key, value) in dictionary)
-        mapOfReplacements[key.toLowerCase()] = value.toLowerCase()
+    val mapOfReplacements = dictionary.map { it.key.toLowerCase() to it.value.toLowerCase() }.toMap()
     for (line in lines) {
         for (char in line) {
-            val lowerCasedChar = char.toLowerCase()
-            if (mapOfReplacements.keys.contains(lowerCasedChar)) {
-                val replacement = mapOfReplacements[lowerCasedChar]!!
+            if (mapOfReplacements.containsKey(char.toLowerCase())) {
+                val replacement = mapOfReplacements[char.toLowerCase()]
                 if (char.isLowerCase()) {
                     builder.append(replacement)
-                } else builder.append(replacement.capitalize())
-            } else builder.append(lowerCasedChar)
+                } else builder.append(replacement!!.capitalize())
+            } else builder.append(char)
         }
         builder.append('\n')
     }
