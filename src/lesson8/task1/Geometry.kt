@@ -243,7 +243,6 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
     val p = (a.distance(b) + b.distance(c) + a.distance(c)) / 2
     val circleRadius = (a.distance(b) * b.distance(c) * a.distance(c)) /
             (4 * sqrt(p * (p - a.distance(b)) * (p - b.distance(c)) * (p - a.distance(c))))
-    // Desperate attempts to resolve the issues via enormous tremendously inadequate formula.
     return Circle(circleCenter, circleRadius)
 }
 
