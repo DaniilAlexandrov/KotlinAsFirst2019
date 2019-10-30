@@ -2,6 +2,7 @@
 
 package lesson8.task1
 
+
 import kotlin.math.abs
 
 /**
@@ -87,7 +88,8 @@ class HexSegment(val begin: HexPoint, val end: HexPoint) {
      * Такими являются, например, отрезок 30-34 (горизонталь), 13-63 (прямая диагональ) или 51-24 (косая диагональ).
      * А, например, 13-26 не является "правильным" отрезком.
      */
-    fun isValid(): Boolean = TODO()
+    fun isValid(): Boolean =
+        ((begin.x == end.x) || (begin.y == end.y) || (begin.x + begin.y == end.x + end.y))
 
     /**
      * Средняя
@@ -96,7 +98,14 @@ class HexSegment(val begin: HexPoint, val end: HexPoint) {
      * Для "правильного" отрезка выбирается одно из первых шести направлений,
      * для "неправильного" -- INCORRECT.
      */
-    fun direction(): Direction = TODO()
+    fun direction(): Direction {
+        if (!isValid()) return Direction.INCORRECT
+        return when {
+            (begin.y == end.y) -> if (begin.x - end.x > 0) Direction.LEFT else Direction.RIGHT
+            (begin.x == end.x) -> if (begin.y - end.y > 0) Direction.DOWN_LEFT else Direction.UP_RIGHT
+            else -> if (begin.y - end.y > 0) Direction.DOWN_RIGHT else Direction.UP_LEFT
+        }
+    }
 
     override fun equals(other: Any?) =
         other is HexSegment && (begin == other.begin && end == other.end || end == other.begin && begin == other.end)
@@ -123,9 +132,17 @@ enum class Direction {
      * Простая
      *
      * Вернуть направление, противоположное данному.
-     * Для INCORRECT вернуть INCORRECT
+    ............ * Для INCORRECT вернуть INCORRECT
      */
-    fun opposite(): Direction = TODO()
+    fun opposite(): Direction = when (values()[ordinal]) {
+        RIGHT -> LEFT
+        UP_RIGHT -> DOWN_LEFT
+        UP_LEFT -> DOWN_RIGHT
+        LEFT -> RIGHT
+        DOWN_LEFT -> UP_RIGHT
+        DOWN_RIGHT -> UP_LEFT
+        else -> INCORRECT
+    }
 
     /**
      * Средняя
@@ -137,7 +154,10 @@ enum class Direction {
      * Для направления INCORRECT бросить исключение IllegalArgumentException.
      * При решении этой задачи попробуйте обойтись без перечисления всех семи вариантов.
      */
-    fun next(): Direction = TODO()
+    fun next(): Direction {
+        require(values()[ordinal] != INCORRECT)
+        return values()[(ordinal + 1) % 6]
+    }
 
     /**
      * Простая
@@ -145,7 +165,10 @@ enum class Direction {
      * Вернуть true, если данное направление совпадает с other или противоположно ему.
      * INCORRECT не параллельно никакому направлению, в том числе другому INCORRECT.
      */
-    fun isParallel(other: Direction): Boolean = TODO()
+    fun isParallel(other: Direction): Boolean {
+        return if (values()[ordinal] == INCORRECT) false
+        else (ordinal == other.ordinal) || (ordinal == other.opposite().ordinal)
+    }
 }
 
 /**
@@ -161,7 +184,18 @@ enum class Direction {
  * 35, direction = UP_LEFT, distance = 2 --> 53
  * 45, direction = DOWN_LEFT, distance = 4 --> 05
  */
-fun HexPoint.move(direction: Direction, distance: Int): HexPoint = TODO()
+fun HexPoint.move(direction: Direction, distance: Int): HexPoint {
+    require(direction.ordinal != 6)
+    if (distance == 0) return HexPoint(x, y)
+    return when (direction) {
+        Direction.LEFT -> HexPoint(x - distance, y)
+        Direction.DOWN_LEFT -> HexPoint(x, y - distance)
+        Direction.DOWN_RIGHT -> HexPoint(x + distance, y - distance)
+        Direction.RIGHT -> HexPoint(x + distance, y)
+        Direction.UP_RIGHT -> HexPoint(x, y + distance)
+        else -> HexPoint(x - distance, y + distance)
+    }
+}
 
 /**
  * Сложная
@@ -181,7 +215,12 @@ fun HexPoint.move(direction: Direction, distance: Int): HexPoint = TODO()
  *       HexPoint(y = 5, x = 3)
  *     )
  */
-fun pathBetweenHexes(from: HexPoint, to: HexPoint): List<HexPoint> = TODO()
+fun pathBetweenHexes(from: HexPoint, to: HexPoint): List<HexPoint> = TODO() /*{
+    val desirableDistance = from.distance(to)
+    val route = mutableListOf<HexPoint>()
+    return route
+} */
+
 
 /**
  * Очень сложная
