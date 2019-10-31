@@ -4,6 +4,8 @@ package lesson8.task1
 
 
 import kotlin.math.abs
+import kotlin.math.round
+import kotlin.math.roundToInt
 
 /**
  * Точка (гекс) на шестиугольной сетке.
@@ -43,6 +45,12 @@ data class HexPoint(val x: Int, val y: Int) {
         (abs(x - other.x) + abs(y - other.y) + abs(x + y - other.x - other.y)) / 2
 
     override fun toString(): String = "$y.$x"
+    fun toCubeCoordinates(): Cube {
+        val a = y.toDouble()
+        val b = x.toDouble()
+        val c = -a - b
+        return Cube(a, c, b)
+    }
 }
 
 /**
@@ -215,12 +223,68 @@ fun HexPoint.move(direction: Direction, distance: Int): HexPoint {
  *       HexPoint(y = 5, x = 3)
  *     )
  */
-fun pathBetweenHexes(from: HexPoint, to: HexPoint): List<HexPoint> = TODO() /*{
+fun hexRevert(one: HexPoint): HexPoint {
+    val k: Int = one.x
+    val hexX: Int
+    var hexY = one.y
+    hexX = hexY
+    hexY = k
+    return HexPoint(hexX, hexY)
+}
+
+fun pathBetweenHexes(from: HexPoint, to: HexPoint): List<HexPoint> {
     val desirableDistance = from.distance(to)
     val route = mutableListOf<HexPoint>()
+    for (i in 0..desirableDistance)
+        route.add(
+            cubeRounding(
+                cubeInterpolation(
+                    from.toCubeCoordinates(),
+                    hexRevert(to).toCubeCoordinates(), 1.0 * i / desirableDistance
+                )
+            ).toAxialCoordinates()
+        )
     return route
-} */
+}
+/*       60  61  62  63  64  65
+*     50  51  52  53  54  55  56
+*   40  41  42  43  44  45  46  47
+* 30  31  32  33  34  35  36  37  38
+*   21  22  23  24  25  26  27  28
+*     12  13  14  15  16  17  18
+*       03  04  05  06  07  08 */
 
+//God bless red blob games
+// Gonna need this one for proper linear interpolation algorithm.
+class Cube(val x: Double, val y: Double, val z: Double) {
+    // Y coordinate gets inlined which is helpful in upcoming calculations.
+    fun toAxialCoordinates(): HexPoint = HexPoint(x.roundToInt(), z.roundToInt())
+}
+
+// General interpolation algorithm.
+fun interpolation(start: Double, end: Double, t: Double): Double = start + t * (end - start)
+
+// Applying the algorithm for cube coordinates.
+fun cubeInterpolation(initial: Cube, eventual: Cube, t: Double): Cube =
+    Cube(
+        interpolation(initial.x, eventual.x, t),
+        interpolation(initial.y, eventual.y, t),
+        interpolation(initial.z, eventual.z, t)
+    )
+
+// Copy pasted with some kotlin adjustments.
+fun cubeRounding(cube: Cube): Cube {
+    var rx = round(cube.x)
+    var ry = round(cube.y)
+    var rz = round(cube.z)
+    val xDiff = abs(rx - cube.x)
+    val yDiff = abs(ry - cube.y)
+    val zDiff = abs(rz - cube.z)
+    if ((xDiff > yDiff) && (xDiff > zDiff)) rx = -ry - rz
+    else if (yDiff > zDiff) ry = -rx - rz
+    else rz = -rx - ry
+    return Cube(rx, ry, rz)
+}
 
 /**
  * Очень сложная
