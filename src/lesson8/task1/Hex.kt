@@ -223,57 +223,43 @@ fun HexPoint.move(direction: Direction, distance: Int): HexPoint {
  *       HexPoint(y = 5, x = 3)
  *     )
  */
-fun hexRevert(one: HexPoint): HexPoint {
-    val k: Int = one.x
-    val hexX: Int
-    var hexY = one.y
-    hexX = hexY
-    hexY = k
-    return HexPoint(hexX, hexY)
-}
 
 fun pathBetweenHexes(from: HexPoint, to: HexPoint): List<HexPoint> {
     val desirableDistance = from.distance(to)
     val route = mutableListOf<HexPoint>()
     for (i in 0..desirableDistance)
         route.add(
-            cubeRounding(
-                cubeInterpolation(
+            cubeRound(
+                cubeLerp(
                     from.toCubeCoordinates(),
-                    hexRevert(to).toCubeCoordinates(), 1.0 * i / desirableDistance
+                    to.toCubeCoordinates(), 1.0 / desirableDistance * i
                 )
             ).toAxialCoordinates()
         )
     return route
 }
-/*       60  61  62  63  64  65
-*     50  51  52  53  54  55  56
-*   40  41  42  43  44  45  46  47
-* 30  31  32  33  34  35  36  37  38
-*   21  22  23  24  25  26  27  28
-*     12  13  14  15  16  17  18
-*       03  04  05  06  07  08 */
 
 //God bless red blob games
 // Gonna need this one for proper linear interpolation algorithm.
 class Cube(val x: Double, val y: Double, val z: Double) {
-    // Y coordinate gets inlined which is helpful in upcoming calculations.
-    fun toAxialCoordinates(): HexPoint = HexPoint(x.roundToInt(), z.roundToInt())
+    // Y coordinate gets inlined which is helpful in further calculations.
+    fun toAxialCoordinates(): HexPoint = HexPoint(z.roundToInt(), x.roundToInt())
 }
 
 // General interpolation algorithm.
-fun interpolation(start: Double, end: Double, t: Double): Double = start + t * (end - start)
+fun lerp(begin: Double, end: Double, t: Double): Double = begin + t * (end - begin)
 
 // Applying the algorithm for cube coordinates.
-fun cubeInterpolation(initial: Cube, eventual: Cube, t: Double): Cube =
+fun cubeLerp(begin: Cube, end: Cube, t: Double): Cube =
     Cube(
-        interpolation(initial.x, eventual.x, t),
-        interpolation(initial.y, eventual.y, t),
-        interpolation(initial.z, eventual.z, t)
+        lerp(begin.x, end.x, t),
+        lerp(begin.y, end.y, t),
+        lerp(begin.z, end.z, t)
     )
 
 // Copy pasted with some kotlin adjustments.
-fun cubeRounding(cube: Cube): Cube {
+
+fun cubeRound(cube: Cube): Cube {
     var rx = round(cube.x)
     var ry = round(cube.y)
     var rz = round(cube.z)
@@ -301,7 +287,10 @@ fun cubeRounding(cube: Cube): Cube {
  *
  * Если все три точки совпадают, вернуть шестиугольник нулевого радиуса с центром в данной точке.
  */
-fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? = TODO()
+fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
+    if ((a == c) && (c == b)) return Hexagon(c, 0)
+    TODO()
+}
 
 /**
  * Очень сложная

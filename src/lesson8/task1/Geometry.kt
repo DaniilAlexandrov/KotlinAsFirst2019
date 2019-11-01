@@ -201,8 +201,12 @@ fun lineByPoints(a: Point, b: Point): Line {//= lineBySegment(Segment(a, b))
  * Построить серединный перпендикуляр по отрезку или по двум точкам
  */
 fun bisectorByPoints(a: Point, b: Point): Line {
-    val desirableAngle = atan((b.y - a.y) / (b.x - a.x)) + PI / 2
+    var desirableAngle = atan((a.y - b.y) / (a.x - b.x)) + PI / 2
     val applicationPoint = Point((b.x + a.x) / 2, (b.y + a.y) / 2)
+    when {
+        desirableAngle < 0 -> desirableAngle += PI
+        desirableAngle >= PI -> desirableAngle -= PI
+    }
     return Line(applicationPoint, desirableAngle % PI)
 }
 
@@ -260,6 +264,7 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
 fun minContainingCircle(vararg points: Point): Circle {
     require(points.isNotEmpty())
     if (points.size == 1) return Circle(points[0], 0.0)
+    //val testCircle = circleByDiameter(Segment(points[0], points[1])) // Random circle without fixed points.
     TODO()
 }
 
