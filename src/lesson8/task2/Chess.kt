@@ -2,8 +2,6 @@
 
 package lesson8.task2
 
-import lesson1.task1.sqr
-
 /**
  * Клетка шахматной доски. Шахматная доска квадратная и имеет 8 х 8 клеток.
  * Поэтому, обе координаты клетки (горизонталь row, вертикаль column) могут находиться в пределах от 1 до 8.
@@ -65,14 +63,7 @@ fun square(notation: String): Square {
  * Пример: rookMoveNumber(Square(3, 1), Square(6, 3)) = 2
  * Ладья может пройти через клетку (3, 3) или через клетку (6, 1) к клетке (6, 3).
  */
-fun rookMoveNumber(start: Square, end: Square): Int {
-    require((start.inside()) && (end.inside()))
-    return when {
-        start == end -> 0
-        (start.row == end.row) || (start.column == end.column) -> 1
-        else -> 2
-    }
-}
+fun rookMoveNumber(start: Square, end: Square): Int = rookTrajectory(start, end).size - 1
 
 /**
  * Средняя
@@ -130,9 +121,6 @@ fun bishopMoveNumber(start: Square, end: Square): Int {
         else -> 2
     }
 }
-/*fun main() {
-    println(bishopMoveNumber(Square(4, 1), Square(1, 2)))
-} */
 
 /**
  * Сложная
@@ -153,20 +141,25 @@ fun bishopMoveNumber(start: Square, end: Square): Int {
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
 fun proxyFinder(start: Square, end: Square): Square {
-    val oddnessDeterminant = (start.column + start.row) % 2
+    val rowDiff = end.row - start.row
+    val colDiff = end.column - start.column
+    val allowedDistance = 1..8
+    /*val oddnessDeterminant = (start.column + start.row) % 2
     var res = Square(0, 0)
-    val rowDiff = start.row - end.row
-    val colDiff = start.column - end.column
-    for (proxyCol in 1..8) // Going through the entire board, ain't able to devise anything more efficient.
+    for (proxyCol in 1..8)
         for (proxyRow in 1..8) {
             if ((Square(proxyCol, proxyRow) == start) || Square(proxyCol, proxyRow) == end) continue
-            if ((proxyCol + proxyRow) % 2 == oddnessDeterminant) // Checking whether current square matched the trajectory of the bishop.
+            else if ((proxyCol + proxyRow) % 2 == oddnessDeterminant)
                 if (sqr(start.column - proxyCol) + sqr(end.column - proxyCol) +
                     sqr(start.row - proxyRow) + sqr(end.row - proxyRow) == sqr(colDiff) + sqr(rowDiff)
                 )
                     res = Square(proxyCol, proxyRow)
         }
-    return res
+    return res */
+    val proxyDistance = (rowDiff - colDiff) / 2
+    return if (start.column - proxyDistance !in allowedDistance || start.row + proxyDistance !in allowedDistance)
+        (Square(end.column + proxyDistance, end.row - proxyDistance)) // Going diagonally down case.
+    else (Square(start.column - proxyDistance, start.row + proxyDistance)) // Going up case.
 }
 
 fun bishopTrajectory(start: Square, end: Square): List<Square> {
@@ -206,7 +199,11 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
  * Пример: kingMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Король может последовательно пройти через клетки (4, 2) и (5, 2) к клетке (6, 3).
  */
-fun kingMoveNumber(start: Square, end: Square): Int = TODO()
+fun kingMoveNumber(start: Square, end: Square): Int {
+    if (start == end) return 0
+    require(start.inside() && end.inside())
+    TODO()
+}
 
 /**
  * Сложная
