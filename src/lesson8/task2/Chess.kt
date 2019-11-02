@@ -2,6 +2,8 @@
 
 package lesson8.task2
 
+import lesson1.task1.sqr
+
 /**
  * Клетка шахматной доски. Шахматная доска квадратная и имеет 8 х 8 клеток.
  * Поэтому, обе координаты клетки (горизонталь row, вертикаль column) могут находиться в пределах от 1 до 8.
@@ -128,6 +130,9 @@ fun bishopMoveNumber(start: Square, end: Square): Int {
         else -> 2
     }
 }
+/*fun main() {
+    println(bishopMoveNumber(Square(4, 1), Square(1, 2)))
+} */
 
 /**
  * Сложная
@@ -147,13 +152,25 @@ fun bishopMoveNumber(start: Square, end: Square): Int {
  *          bishopTrajectory(Square(1, 3), Square(6, 8)) = listOf(Square(1, 3), Square(6, 8))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
+fun proxyFinder(start: Square, end: Square): Square {
+    val oddnessDeterminant = (start.column + start.row) % 2
+    var res = Square(0, 0)
+    val rowDiff = start.row - end.row
+    val colDiff = start.column - end.column
+    for (proxyCol in 1..8) // Going through the entire board, ain't able to devise anything more efficient.
+        for (proxyRow in 1..8) {
+            if ((Square(proxyCol, proxyRow) == start) || Square(proxyCol, proxyRow) == end) continue
+            if ((proxyCol + proxyRow) % 2 == oddnessDeterminant) // Checking whether current square matched the trajectory of the bishop.
+                if (sqr(start.column - proxyCol) + sqr(end.column - proxyCol) +
+                    sqr(start.row - proxyRow) + sqr(end.row - proxyRow) == sqr(colDiff) + sqr(rowDiff)
+                )
+                    res = Square(proxyCol, proxyRow)
+        }
+    return res
+}
+
 fun bishopTrajectory(start: Square, end: Square): List<Square> {
     val route = mutableListOf(start)
-    val movementAmount = (end.row - start.row) / 2 - (end.column - start.column) / 2
-    val proxy =
-        if ((start.column - movementAmount !in 1..8) || (start.row + movementAmount !in 1..8))
-            Square(end.column + movementAmount, end.row - movementAmount)
-        else Square(start.column - movementAmount, start.row + movementAmount)
     return when (bishopMoveNumber(start, end)) {
         -1 -> emptyList()
         0 -> route
@@ -162,7 +179,7 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
             route
         }
         else -> {
-            route.add(proxy)
+            route.add(proxyFinder(start, end))
             route.add(end)
             route
         }

@@ -201,9 +201,9 @@ fun lineByPoints(a: Point, b: Point): Line {//= lineBySegment(Segment(a, b))
  * Построить серединный перпендикуляр по отрезку или по двум точкам
  */
 fun bisectorByPoints(a: Point, b: Point): Line {
-    val desirableAngle = atan((a.y - b.y) / (a.x - b.x)) + PI / 2 + 2 * PI
+    val desirableAngle = atan((a.y - b.y) / (a.x - b.x)) + PI / 2
     val applicationPoint = Point((b.x + a.x) / 2, (b.y + a.y) / 2)
-    return Line(applicationPoint, desirableAngle % PI)
+    return Line(applicationPoint, desirableAngle % PI + 2 * PI)
 }
 
 /**
@@ -238,10 +238,17 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
  */
 fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
     val circleCenter = bisectorByPoints(a, b).crossPoint(bisectorByPoints(b, c))
-    val tempCenterFixing = Point(circleCenter.x, circleCenter.x)
-    val circleRadius = tempCenterFixing.distance(a)
-    return Circle(tempCenterFixing, circleRadius)
+    val circleRadius = circleCenter.distance(a)
+    return Circle(circleCenter, circleRadius)
 }
+/*fun main() {
+    val thirdLine = bisectorByPoints(Point(0.0, 0.0), Point(3.0, 3.0))
+    val fourthLine = bisectorByPoints(Point(-50.0, -50.0), Point(100.0, 150.0))
+    val firstLine = lineByPoints(Point(0.0, 0.0), Point(5.0, 5.0))
+    val secondLine = lineByPoints(Point(3.0, 0.0), Point(0.0, 3.0))
+    //println(firstLine.crossPoint(secondLine))
+    println(thirdLine.crossPoint(fourthLine))
+} */
 
 /**
  * Очень сложная
