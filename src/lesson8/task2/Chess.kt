@@ -63,7 +63,14 @@ fun square(notation: String): Square {
  * Пример: rookMoveNumber(Square(3, 1), Square(6, 3)) = 2
  * Ладья может пройти через клетку (3, 3) или через клетку (6, 1) к клетке (6, 3).
  */
-fun rookMoveNumber(start: Square, end: Square): Int = rookTrajectory(start, end).size - 1
+fun rookMoveNumber(start: Square, end: Square): Int {
+    require((start.inside()) && (end.inside()))
+    return when {
+        start == end -> 0
+        (start.row == end.row) || (start.column == end.column) -> 1
+        else -> 2
+    }
+}
 
 /**
  * Средняя
