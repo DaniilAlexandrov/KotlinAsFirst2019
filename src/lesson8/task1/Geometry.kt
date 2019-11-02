@@ -201,12 +201,8 @@ fun lineByPoints(a: Point, b: Point): Line {//= lineBySegment(Segment(a, b))
  * Построить серединный перпендикуляр по отрезку или по двум точкам
  */
 fun bisectorByPoints(a: Point, b: Point): Line {
-    var desirableAngle = atan((a.y - b.y) / (a.x - b.x)) + PI / 2
+    val desirableAngle = atan((a.y - b.y) / (a.x - b.x)) + PI / 2
     val applicationPoint = Point((b.x + a.x) / 2, (b.y + a.y) / 2)
-    when {
-        desirableAngle < 0 -> desirableAngle += PI
-        desirableAngle >= PI -> desirableAngle -= PI
-    }
     return Line(applicationPoint, desirableAngle % PI)
 }
 
@@ -241,12 +237,8 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
  * построить окружность, описанную вокруг треугольника - эквивалентная задача).
  */
 fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
-    val abPerpendicular = bisectorByPoints(a, b)
-    val bcPerpendicular = bisectorByPoints(b, c)
-    val circleCenter = abPerpendicular.crossPoint(bcPerpendicular)
-    val p = (a.distance(b) + b.distance(c) + a.distance(c)) / 2
-    val circleRadius = (a.distance(b) * b.distance(c) * a.distance(c)) /
-            (4 * sqrt(p * (p - a.distance(b)) * (p - b.distance(c)) * (p - a.distance(c))))
+    val circleCenter = bisectorByPoints(a, b).crossPoint(bisectorByPoints(b, c))
+    val circleRadius = circleCenter.distance(a)
     return Circle(circleCenter, circleRadius)
 }
 
@@ -264,7 +256,38 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
 fun minContainingCircle(vararg points: Point): Circle {
     require(points.isNotEmpty())
     if (points.size == 1) return Circle(points[0], 0.0)
-    //val testCircle = circleByDiameter(Segment(points[0], points[1])) // Random circle without fixed points.
-    TODO()
+    var resCircle = circleByDiameter(Segment(Point(0.0, 0.0), Point(0.0, 0.0)))
+    var initRadius = Double.MAX_VALUE
+    var maxDiameterPoints = Pair(points[0], points[1])
+    var circleExclusionCounter = 0
+    val maxDiameterLength = maxDiameterPoints.first.distance(maxDiameterPoints.second)
+    var maxDiameter = Segment(maxDiameterPoints.first, maxDiameterPoints.second)
+    for (i in 0 until points.size - 1)
+        for (j in i + 1 until points.size)
+            if (points[i].distance(points[j]) > maxDiameterLength) {
+                maxDiameterPoints = Pair(points[i], points[j])
+                maxDiameter = Segment(maxDiameterPoints.first, maxDiameterPoints.second)
+            }
+    for (point in points)
+        if (!circleByDiameter(maxDiameter).contains(point)) {
+            circleExclusionCounter++
+            break
+        }
+    if (circleExclusionCounter == 0) resCircle = circleByDiameter(maxDiameter)
+    else {
+        // Алгоритм сужения радиуса от бесконечно большого значения к наименьшему
+        circleExclusionCounter = 0 // Теперь счетчик выполняет выполняет обратную функцию.
+        for (firstPoint in points)
+            for (secondPoint in points)
+                for (thirdPoint in points) {
+                    resCircle = circleByThreePoints(firstPoint, secondPoint, thirdPoint)
+                    for (point in points)
+                        if (resCircle.contains(point)) circleExclusionCounter++
+                    if (circleExclusionCounter == points.size && resCircle.radius < initRadius) {
+                        initRadius = resCircle.radius
+                    }
+                }
+    }
+    return resCircle
 }
 

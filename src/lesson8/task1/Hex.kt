@@ -46,8 +46,8 @@ data class HexPoint(val x: Int, val y: Int) {
 
     override fun toString(): String = "$y.$x"
     fun toCubeCoordinates(): Cube {
-        val a = y.toDouble()
-        val b = x.toDouble()
+        val a = x.toDouble()
+        val b = y.toDouble()
         val c = -a - b
         return Cube(a, c, b)
     }
@@ -97,7 +97,7 @@ class HexSegment(val begin: HexPoint, val end: HexPoint) {
      * А, например, 13-26 не является "правильным" отрезком.
      */
     fun isValid(): Boolean =
-        ((begin.x == end.x) || (begin.y == end.y) || (begin.x + begin.y == end.x + end.y))
+        ((begin.x == end.x) || (begin.y == end.y) || (begin.x + begin.y == end.x + end.y)) && begin != end
 
     /**
      * Средняя
@@ -239,11 +239,10 @@ fun pathBetweenHexes(from: HexPoint, to: HexPoint): List<HexPoint> {
     return route
 }
 
-//God bless red blob games
 // Gonna need this one for proper linear interpolation algorithm.
 class Cube(val x: Double, val y: Double, val z: Double) {
     // Y coordinate gets inlined which is helpful in further calculations.
-    fun toAxialCoordinates(): HexPoint = HexPoint(z.roundToInt(), x.roundToInt())
+    fun toAxialCoordinates(): HexPoint = HexPoint(x.roundToInt(), z.roundToInt())
 }
 
 // General interpolation algorithm.
