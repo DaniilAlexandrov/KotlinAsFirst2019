@@ -226,7 +226,7 @@ fun HexPoint.move(direction: Direction, distance: Int): HexPoint {
 
 fun pathBetweenHexes(from: HexPoint, to: HexPoint): List<HexPoint> {
     val desirableDistance = from.distance(to)
-    if (from == to) return listOf(to)
+    if (from == to) return listOf(to) // Fix of mysterious kotoed bug with required answer of '1'.
     val route = mutableListOf<HexPoint>()
     for (i in 0..desirableDistance)
         route.add(
