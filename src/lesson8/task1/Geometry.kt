@@ -201,7 +201,7 @@ fun lineByPoints(a: Point, b: Point): Line {//= lineBySegment(Segment(a, b))
  * Построить серединный перпендикуляр по отрезку или по двум точкам
  */
 fun bisectorByPoints(a: Point, b: Point): Line {
-    val desirableAngle = atan((a.y - b.y) / (a.x - b.x)) + PI / 2
+    val desirableAngle = atan((a.y - b.y) / (a.x - b.x)) + PI / 2 + 2 * PI
     val applicationPoint = Point((b.x + a.x) / 2, (b.y + a.y) / 2)
     return Line(applicationPoint, desirableAngle % PI)
 }
