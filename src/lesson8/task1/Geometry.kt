@@ -264,10 +264,10 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
 // Построчно реализованный алгоритм, описанный на https://codeforces.com/blog/entry/3229
 fun minContainingCircle(vararg points: Point): Circle {
     require(points.isNotEmpty())
+    if (points.size == 1) return Circle(points[0], 0.0)
     val pointsList = points.toList().shuffled()
     val middle = Point((points[0].x + points[1].x) / 2, (points[0].y + points[1].y) / 2)
     var res = Circle(middle, middle.distance(points[1]))
-    if (points.size == 1) return Circle(points[0], 0.0)
     for (point in 2 until pointsList.size) {
         if (res.contains(pointsList[point])) continue
         else {
