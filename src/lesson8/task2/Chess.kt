@@ -150,7 +150,9 @@ fun bishopMoveNumber(start: Square, end: Square): Int {
 fun proxyFinder(start: Square, end: Square): Square {
     val rowDiff = end.row - start.row
     val colDiff = end.column - start.column
-    val allowedDistance = 1..8
+    val proxyDistance = (rowDiff - colDiff) / 2
+    val upwardsCase = (Square(start.column - proxyDistance, start.row + proxyDistance))
+    val downwardsCase = (Square(end.column + proxyDistance, end.row - proxyDistance))
     /*val oddnessDeterminant = (start.column + start.row) % 2
     var res = Square(0, 0)
     for (proxyCol in 1..8)
@@ -163,10 +165,9 @@ fun proxyFinder(start: Square, end: Square): Square {
                     res = Square(proxyCol, proxyRow)
         }
     return res */
-    val proxyDistance = (rowDiff - colDiff) / 2
-    return if (start.column - proxyDistance !in allowedDistance || start.row + proxyDistance !in allowedDistance)
-        (Square(end.column + proxyDistance, end.row - proxyDistance)) // Going diagonally down case.
-    else (Square(start.column - proxyDistance, start.row + proxyDistance)) // Going up case.
+
+    return if (start.column - proxyDistance !in 1..8 || start.row + proxyDistance !in 1..8) downwardsCase
+    else upwardsCase
 }
 
 fun bishopTrajectory(start: Square, end: Square): List<Square> {
