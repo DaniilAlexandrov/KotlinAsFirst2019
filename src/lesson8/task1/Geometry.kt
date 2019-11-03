@@ -264,8 +264,9 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
 // Построчно реализованный алгоритм, описанный на https://codeforces.com/blog/entry/3229
 fun minContainingCircle(vararg points: Point): Circle {
     require(points.isNotEmpty())
-    val middle = Point((points[0].x + points[1].x) / 2, (points[0].y + points[1].y) / 2)
-    var res = Circle(middle, middle.distance(points[1]))
+    //val middle = Point((points[0].x + points[1].x) / 2, (points[0].y + points[1].y) / 2)
+    //var res = Circle(middle, middle.distance(points[1]))
+    var res = circleByDiameter(Segment(points[0], points[1]))
     if (points.size == 1) return Circle(points[0], 0.0)
     for (point in 2 until points.size) {
         if (res.contains(points[point])) continue
@@ -278,8 +279,9 @@ fun minContainingCircle(vararg points: Point): Circle {
 }
 
 fun circleByOnePoint(points: List<Point>, firstFixed: Point): Circle {
-    val middle = Point((points[0].x + firstFixed.x) / 2, (points[0].y + firstFixed.y) / 2)
-    var tempMinCircle = Circle(middle, middle.distance(firstFixed))
+    //val middle = Point((points[0].x + firstFixed.x) / 2, (points[0].y + firstFixed.y) / 2)
+    // var tempMinCircle = Circle(middle, middle.distance(firstFixed))
+    var tempMinCircle = circleByDiameter(Segment(points[0], firstFixed))
     for (point in 1 until points.size) {
         if (tempMinCircle.contains(points[point])) continue
         else {
@@ -291,8 +293,9 @@ fun circleByOnePoint(points: List<Point>, firstFixed: Point): Circle {
 }
 
 fun circleByTwoPoints(points: List<Point>, firstFixed: Point, secondFixed: Point): Circle {
-    val middle = Point((secondFixed.x + firstFixed.x) / 2, (secondFixed.y + firstFixed.y) / 2)
-    var tempMinCircle = Circle(middle, middle.distance(firstFixed))
+    //val middle = Point((secondFixed.x + firstFixed.x) / 2, (secondFixed.y + firstFixed.y) / 2)
+    //var tempMinCircle = Circle(middle, middle.distance(firstFixed))
+    var tempMinCircle = circleByDiameter(Segment(firstFixed, secondFixed))
     for (point in points) {
         if (tempMinCircle.contains(point)) continue
         else tempMinCircle = circleByThreePoints(point, firstFixed, secondFixed)
