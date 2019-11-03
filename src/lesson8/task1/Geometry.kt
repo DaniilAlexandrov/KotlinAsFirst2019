@@ -261,41 +261,42 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
  * три точки данного множества, либо иметь своим диаметром отрезок,
  * соединяющий две самые удалённые точки в данном множестве.
  */
+// Построчно реализованный алгоритм, описанный на https://codeforces.com/blog/entry/3229
 fun minContainingCircle(vararg points: Point): Circle {
     require(points.isNotEmpty())
+    val middle = Point((points[0].x + points[1].x) / 2, (points[0].y + points[1].y) / 2)
+    var res = Circle(middle, middle.distance(points[1]))
     if (points.size == 1) return Circle(points[0], 0.0)
-    var resCircle = circleByDiameter(Segment(Point(0.0, 0.0), Point(0.0, 0.0)))
-    var initRadius = Double.MAX_VALUE
-    var maxDiameterPoints = Pair(points[0], points[1])
-    var circleExclusionCounter = 0
-    val maxDiameterLength = maxDiameterPoints.first.distance(maxDiameterPoints.second)
-    var maxDiameter = Segment(maxDiameterPoints.first, maxDiameterPoints.second)
-    for (i in 0 until points.size - 1)
-        for (j in i + 1 until points.size)
-            if (points[i].distance(points[j]) > maxDiameterLength) {
-                maxDiameterPoints = Pair(points[i], points[j])
-                maxDiameter = Segment(maxDiameterPoints.first, maxDiameterPoints.second)
-            }
-    for (point in points)
-        if (!circleByDiameter(maxDiameter).contains(point)) {
-            circleExclusionCounter++
-            break
+    for (point in 2 until points.size) {
+        if (res.contains(points[point])) continue
+        else {
+            val toBeChecked = points.toMutableList().subList(0, point).shuffled()
+            res = circleByOnePoint(toBeChecked, points[point])
         }
-    if (circleExclusionCounter == 0) resCircle = circleByDiameter(maxDiameter)
-    else {
-        // Алгоритм сужения радиуса от бесконечно большого значения к наименьшему
-        circleExclusionCounter = 0 // Теперь счетчик выполняет выполняет обратную функцию.
-        for (firstPoint in points)
-            for (secondPoint in points)
-                for (thirdPoint in points) {
-                    resCircle = circleByThreePoints(firstPoint, secondPoint, thirdPoint)
-                    for (point in points)
-                        if (resCircle.contains(point)) circleExclusionCounter++
-                    if (circleExclusionCounter == points.size && resCircle.radius < initRadius) {
-                        initRadius = resCircle.radius
-                    }
-                }
     }
-    return resCircle
+    return res
+}
+
+fun circleByOnePoint(points: List<Point>, firstFixed: Point): Circle {
+    val middle = Point((points[0].x + firstFixed.x) / 2, (points[0].y + firstFixed.y) / 2)
+    var tempMinCircle = Circle(middle, middle.distance(firstFixed))
+    for (point in 1 until points.size) {
+        if (tempMinCircle.contains(points[point])) continue
+        else {
+            val toBeChecked = points.toMutableList().subList(0, point).shuffled()
+            tempMinCircle = circleByTwoPoints(toBeChecked, firstFixed, points[point])
+        }
+    }
+    return tempMinCircle
+}
+
+fun circleByTwoPoints(points: List<Point>, firstFixed: Point, secondFixed: Point): Circle {
+    val middle = Point((secondFixed.x + firstFixed.x) / 2, (secondFixed.y + firstFixed.y) / 2)
+    var tempMinCircle = Circle(middle, middle.distance(firstFixed))
+    for (point in points) {
+        if (tempMinCircle.contains(point)) continue
+        else tempMinCircle = circleByThreePoints(point, firstFixed, secondFixed)
+    }
+    return tempMinCircle
 }
 
