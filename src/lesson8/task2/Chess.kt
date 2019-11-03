@@ -2,6 +2,9 @@
 
 package lesson8.task2
 
+import kotlin.math.abs
+import kotlin.math.max
+
 /**
  * Клетка шахматной доски. Шахматная доска квадратная и имеет 8 х 8 клеток.
  * Поэтому, обе координаты клетки (горизонталь row, вертикаль column) могут находиться в пределах от 1 до 8.
@@ -210,7 +213,8 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
 fun kingMoveNumber(start: Square, end: Square): Int {
     if (start == end) return 0
     require(start.inside() && end.inside())
-    TODO()
+    // Растояние Чебышёва.
+    return max(abs(end.column - start.column), abs(end.row - start.row))
 }
 
 /**

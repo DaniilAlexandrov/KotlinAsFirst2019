@@ -246,8 +246,7 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
     val fourthLine = bisectorByPoints(Point(-50.0, -50.0), Point(100.0, 150.0))
     val firstLine = lineByPoints(Point(0.0, 0.0), Point(5.0, 5.0))
     val secondLine = lineByPoints(Point(3.0, 0.0), Point(0.0, 3.0))
-    //println(firstLine.crossPoint(secondLine))
-    println(thirdLine.crossPoint(fourthLine))
+    println(circleByThreePoints(Point(0.268, 0.0), Point(0.43, -632.0), Point(-632.0, -632.0)))
 } */
 
 /**
