@@ -159,8 +159,10 @@ class Line private constructor(
      */
     fun crossPoint(other: Line): Point {
         val crossX = (other.b * cos(angle) - b * cos(other.angle)) / sin(angle - other.angle)
-        val crossY = (sin(other.angle) * crossX + other.b) / cos(other.angle)
-        return Point(crossX, crossY)
+        val crossY = (crossX * sin((angle)) + b) / cos(angle)
+        val perpendicularCaseY = (sin(other.angle) * crossX + other.b) / cos(other.angle)
+        return if (angle == PI / 2) Point(crossX, perpendicularCaseY) else
+            Point(crossX, crossY)
     }
 
     override fun equals(other: Any?) = other is Line && angle == other.angle && b == other.b
@@ -179,17 +181,14 @@ class Line private constructor(
  *
  * Построить прямую по отрезку
  */
-fun lineBySegment(s: Segment): Line = lineByPoints(s.begin, s.end)//{
-// val k = (s.end.y - s.begin.y) / (s.end.x - s.begin.x)
-// return Line(s.begin, atan(k) % PI)
-//}
+fun lineBySegment(s: Segment): Line = lineByPoints(s.begin, s.end)
 
 /**
  * Средняя
  *
  * Построить прямую по двум точкам
  */
-fun lineByPoints(a: Point, b: Point): Line {//= lineBySegment(Segment(a, b))
+fun lineByPoints(a: Point, b: Point): Line {
     val k = (b.y - a.y) / (b.x - a.x)
     return if (k < 0) Line(a, (2 * PI + atan(k)) % PI)
     else Line(a, atan(k) % PI)
@@ -241,12 +240,14 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
     val circleRadius = circleCenter.distance(a)
     return Circle(circleCenter, circleRadius)
 }
+
 /*fun main() {
-    val thirdLine = bisectorByPoints(Point(0.0, 0.0), Point(3.0, 3.0))
-    val fourthLine = bisectorByPoints(Point(-50.0, -50.0), Point(100.0, 150.0))
-    val firstLine = lineByPoints(Point(0.0, 0.0), Point(5.0, 5.0))
-    val secondLine = lineByPoints(Point(3.0, 0.0), Point(0.0, 3.0))
-    println(circleByThreePoints(Point(0.268, 0.0), Point(0.43, -632.0), Point(-632.0, -632.0)))
+    val a = Point(-2.220446049250313e-16, 0.04357709638399421)
+    val b = Point(-632.0, -632.0)
+    val c = Point(0.7852342283048847, -632.0)
+    val center = bisectorByPoints(a, b).crossPoint(bisectorByPoints(b, c))
+    println(center)
+    //println(Circle(center, center.distance(a)))
 } */
 
 /**

@@ -154,8 +154,8 @@ fun proxyFinder(start: Square, end: Square): Square {
     val rowDiff = end.row - start.row
     val colDiff = end.column - start.column
     val proxyDistance = (rowDiff - colDiff) / 2
-    val upwardsCase = (Square(start.column - proxyDistance, start.row + proxyDistance))
-    val downwardsCase = (Square(end.column + proxyDistance, end.row - proxyDistance))
+    val downwards = (Square(start.column - proxyDistance, start.row + proxyDistance))
+    val upwards = (Square(end.column + proxyDistance, end.row - proxyDistance))
     /*val oddnessDeterminant = (start.column + start.row) % 2
     var res = Square(0, 0)
     for (proxyCol in 1..8)
@@ -169,8 +169,8 @@ fun proxyFinder(start: Square, end: Square): Square {
         }
     return res */
 
-    return if (start.column - proxyDistance !in 1..8 || start.row + proxyDistance !in 1..8) downwardsCase
-    else upwardsCase
+    return if (start.column - proxyDistance !in 1..8 || start.row + proxyDistance !in 1..8) upwards
+    else downwards
 }
 
 fun bishopTrajectory(start: Square, end: Square): List<Square> {
@@ -231,7 +231,11 @@ fun kingMoveNumber(start: Square, end: Square): Int {
  *          kingTrajectory(Square(3, 5), Square(6, 2)) = listOf(Square(3, 5), Square(4, 4), Square(5, 3), Square(6, 2))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun kingTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun kingTrajectory(start: Square, end: Square): List<Square> {
+    val route = mutableListOf(start)
+    if (start == end) return route
+    TODO()
+}
 
 /**
  * Сложная
