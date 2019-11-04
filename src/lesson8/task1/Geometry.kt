@@ -242,7 +242,7 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
 }
 
 /*fun main() {
-ПОМОГИТЕ 
+ПОМОГИТЕ
     val p1 = Point(-632.0, -632.0)
     val p2 = Point(0.9411807068960312, 0.24262048974096473)
     val p3 = Point(0.9654551026953924, 0.018026749024876)
@@ -325,6 +325,44 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
             p55, p56, p57, p58, p59, p60, p61, p62, p63, p64, p65, p66, p67, p68, p69, p70, p71, p72, p73, p74
         )
     )
+}
+fun main() {
+    val p1 = Point(-632.0, 0.8050317828064927)
+    val p2 = Point(0.0, -632.0)
+    val p3 = Point(-632.0, -2.220446049250313e-16)
+    val p4 = Point(0.6420241922765781, 0.6782796648311007)
+    val p5 = Point(0.4799755103405119, -2.220446049250313e-16)
+    val p6 = Point(0.4386978523272347, 0.2789036274375052)
+    val p7 = Point(2.220446049250313e-16, 0.3217797935156028)
+    val p8 = Point(0.40132758779491573, 0.2507054943289473)
+    val p9 = Point(0.0, 0.16293403441180876)
+    val p10 = Point(-632.0, -5e-324)
+    val p11 = Point(0.6339419374855758, 0.0)
+    val p12 = Point(0.8011567898523145, -632.0)
+    val p13 = Point(0.7147901267704037, 0.8209759398881262)
+    val p14 = Point(0.0, 0.8339089373277871)
+    val p15 = Point(-632.0, 0.30884107332528266)
+    val p16 = Point(0.03879070139568819, 0.3649109444011581)
+    val p17 = Point(0.3864101960415818, 0.294344568087093)
+    val p18 = Point(-632.0, 0.7406746074615942)
+    val p19 = Point(0.2580487239145476, -632.0)
+    val p20 = Point(0.2826417449199319, -632.0)
+    val p21 = Point(0.9403286536879756, -5e-324)
+    val p22 = Point(0.7064629075242836, 0.08301500837896403)
+    val p23 = Point(0.3150957773271038, 0.9628173200187997)
+    val p24 = Point(0.7861184102506047, 2.220446049250313e-16)
+    val p25 = Point(-632.0, 0.9586914914269127)
+    val p26 = Point(2.220446049250313e-16, 0.15400556289600897)
+    val p27 = Point(0.4708433266041697, 0.8665115355659835)
+    val p28 = Point(-632.0, 0.7438910762962831)
+    val p29 = Point(-632.0, 0.18416821825263552)
+    val p30 = Point(-632.0, 0.5080123858978958)
+    println(
+        minContainingCircle(
+            p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12,
+            p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27, p28, p29, p30
+        )
+    )
 } */
 
 /**
@@ -344,7 +382,7 @@ fun minContainingCircle(vararg points: Point): Circle {
     if (points.size == 1) return Circle(points[0], 0.0)
     val middle = Point((points[0].x + points[1].x) / 2, (points[0].y + points[1].y) / 2)
     var res = Circle(middle, middle.distance(points[1]))
-    val pointsList = points.toList().shuffled()
+    val pointsList = points.toList()//.shuffled()
     for (index in 2 until pointsList.size) {
         if (res.contains(pointsList[index])) continue
         else {
