@@ -242,12 +242,10 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
 }
 
 /*fun main() {
-    val a = Point(-2.220446049250313e-16, 0.04357709638399421)
-    val b = Point(-632.0, -632.0)
-    val c = Point(0.7852342283048847, -632.0)
-    val center = bisectorByPoints(a, b).crossPoint(bisectorByPoints(b, c))
-    println(center)
-    //println(Circle(center, center.distance(a)))
+    val a = Point(-632.0, -632.0)
+    val b = Point(-632.0, 0.11728620336685591)
+    val c = Point(0.9940762552376867, 0.10037977484451222)
+    println(minContainingCircle(a, b, c))
 } */
 
 /**
@@ -265,14 +263,14 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
 fun minContainingCircle(vararg points: Point): Circle {
     require(points.isNotEmpty())
     if (points.size == 1) return Circle(points[0], 0.0)
-    val pointsList = points.toList().shuffled()
     val middle = Point((points[0].x + points[1].x) / 2, (points[0].y + points[1].y) / 2)
     var res = Circle(middle, middle.distance(points[1]))
-    for (point in 2 until pointsList.size) {
-        if (res.contains(pointsList[point])) continue
+    val pointsList = points.toList()
+    for (index in 2 until pointsList.size) {
+        if (res.contains(pointsList[index])) continue
         else {
-            val toBeChecked = pointsList.toMutableList().subList(0, point).shuffled()
-            res = circleByOnePoint(toBeChecked, pointsList[point])
+            val toBeChecked = points.toMutableList().subList(0, index).shuffled()
+            res = circleByOnePoint(toBeChecked, pointsList[index])
         }
     }
     return res
@@ -281,11 +279,11 @@ fun minContainingCircle(vararg points: Point): Circle {
 fun circleByOnePoint(points: List<Point>, firstFixed: Point): Circle {
     val middle = Point((points[0].x + firstFixed.x) / 2, (points[0].y + firstFixed.y) / 2)
     var tempMinCircle = Circle(middle, middle.distance(firstFixed))
-    for (point in 1 until points.size) {
-        if (tempMinCircle.contains(points[point])) continue
+    for (index in 1 until points.size) {
+        if (tempMinCircle.contains(points[index])) continue
         else {
-            val toBeChecked = points.toMutableList().subList(0, point).shuffled()
-            tempMinCircle = circleByTwoPoints(toBeChecked, firstFixed, points[point])
+            val toBeChecked = points.toMutableList().subList(0, index).shuffled()
+            tempMinCircle = circleByTwoPoints(toBeChecked, firstFixed, points[index])
         }
     }
     return tempMinCircle
