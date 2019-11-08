@@ -325,8 +325,8 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
             p55, p56, p57, p58, p59, p60, p61, p62, p63, p64, p65, p66, p67, p68, p69, p70, p71, p72, p73, p74
         )
     )
-}
-fun main() {
+}*/
+/*fun main() {
     val p1 = Point(-632.0, 0.8050317828064927)
     val p2 = Point(0.0, -632.0)
     val p3 = Point(-632.0, -2.220446049250313e-16)
@@ -376,7 +376,7 @@ fun main() {
  * три точки данного множества, либо иметь своим диаметром отрезок,
  * соединяющий две самые удалённые точки в данном множестве.
  */
-// Построчно реализованный алгоритм, описанный на https://codeforces.com/blog/entry/3229
+/* Построчно реализованный алгоритм, описанный на https://codeforces.com/blog/entry/3229
 fun minContainingCircle(vararg points: Point): Circle {
     require(points.isNotEmpty())
     if (points.size == 1) return Circle(points[0], 0.0)
@@ -399,7 +399,7 @@ fun circleByOnePoint(points: List<Point>, firstFixed: Point): Circle {
     for (index in 1 until points.size) {
         if (tempMinCircle.contains(points[index])) continue
         else {
-            val toBeChecked = points.toMutableList().subList(0, index).shuffled()
+            val toBeChecked = points.toMutableList().subList(0, index)//.shuffled()
             tempMinCircle = circleByTwoPoints(toBeChecked, firstFixed, points[index])
         }
     }
@@ -414,5 +414,28 @@ fun circleByTwoPoints(points: List<Point>, firstFixed: Point, secondFixed: Point
         else tempMinCircle = circleByThreePoints(point, firstFixed, secondFixed)
     }
     return tempMinCircle
+} */
+fun minContainingCircle(vararg points: Point): Circle {
+    require(points.isNotEmpty())
+    if (points.size == 1) return Circle(points[0], 0.0)
+    var maxDiameter = -10.0
+    var firstMaxPoint = Point(0.0, 0.0)
+    var secondMaxPoint = Point(0.0, 0.0)
+    var longestSegment = Segment(Point(0.0, 0.0), Point(0.0, 0.0))
+    for (i in points.indices - 1)
+        for (j in i + 1 until points.size) {
+            if (points[i].distance(points[j]) > maxDiameter) {
+                maxDiameter = points[i].distance(points[j])
+                firstMaxPoint = points[i]
+                secondMaxPoint = points[j]
+                longestSegment = Segment(points[i], points[j])
+            }
+        }
+    var testCircle = circleByDiameter(longestSegment)
+    for (point in points) {
+        if (!testCircle.contains(point)) {
+            testCircle = circleByThreePoints(firstMaxPoint, secondMaxPoint, point)
+        }
+    }
+    return testCircle
 }
-

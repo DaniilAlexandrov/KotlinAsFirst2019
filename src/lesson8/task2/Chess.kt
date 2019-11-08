@@ -232,9 +232,29 @@ fun kingMoveNumber(start: Square, end: Square): Int {
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
 fun kingTrajectory(start: Square, end: Square): List<Square> {
+    require(start.inside() && end.inside())
     val route = mutableListOf(start)
     if (start == end) return route
-    TODO()
+    val currentSquare = route.last()
+    while (currentSquare != end) {
+        when {
+            (currentSquare.column == end.column) -> if (currentSquare.column > end.column)
+                route.add(Square(currentSquare.column, currentSquare.row - 1))
+            else route.add(Square(currentSquare.column, currentSquare.row + 1))
+            (currentSquare.row == end.row) -> if (currentSquare.row > end.row)
+                route.add(Square(currentSquare.column - 1, currentSquare.row))
+            else route.add(Square(currentSquare.column + 1, currentSquare.row))
+            (currentSquare.row > end.row && currentSquare.column > end.column) ->
+                route.add(Square(currentSquare.column - 1, currentSquare.row - 1))
+            (currentSquare.row > end.row && currentSquare.column < end.column) ->
+                route.add(Square(currentSquare.column + 1, currentSquare.row - 1))
+            (currentSquare.row < end.row && currentSquare.column > end.column) ->
+                route.add(Square(currentSquare.column - 1, currentSquare.row + 1))
+            (currentSquare.row < end.row && currentSquare.column < end.column) ->
+                route.add(Square(currentSquare.column + 1, currentSquare.row + 1))
+        }
+    }
+    return route
 }
 
 /**
@@ -282,4 +302,9 @@ fun knightMoveNumber(start: Square, end: Square): Int = TODO()
  *
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun knightTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun knightTrajectory(start: Square, end: Square): List<Square> {
+    require(start.inside() && end.inside())
+    val adjacent =
+        listOf(Pair(1, 2), Pair(-1, -2), Pair(2, 1), Pair(-2, -1), Pair(-1, 2), Pair(1, -2), Pair(2, -1), Pair(-2, 1))
+    TODO()
+}
