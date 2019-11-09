@@ -2,6 +2,7 @@
 
 package lesson9.task2
 
+import lesson9.task1.Cell
 import lesson9.task1.Matrix
 import lesson9.task1.createMatrix
 
@@ -338,9 +339,9 @@ fun canOpenLock(key: Matrix<Int>, lock: Matrix<Int>): Triple<Boolean, Int, Int> 
                 for (j in 0 until key.width)
                     if (key[i, j] == lock[i + optimalHeight, j + optimalWidth]) {
                         matchDetector = false
-                        break
+                        //break
                     }
-                break
+                //break Kinda not sure whether removing this line wasn't gonna lead to computation timeout.
             }
             if (matchDetector) return Triple(true, optimalHeight, optimalWidth)
         }
@@ -410,7 +411,31 @@ operator fun Matrix<Int>.times(other: Matrix<Int>): Matrix<Int> {
  * 0  4 13  6
  * 3 10 11  8
  */
-fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> = TODO()
+
+fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> {
+    require(moves.all { it <= 15 })
+    val correspondingPosition = mutableMapOf<Int, Cell>()
+    for (i in 0 until matrix.height)
+        for (j in 0 until matrix.width)
+            correspondingPosition[matrix[i, j]] = Cell(i, j) // i for row, j for column.
+    val adjacent = listOf(0 to 1, 1 to 0, -1 to 0, 0 to -1)
+    for (move in moves) {
+        val zeroCoordinates = correspondingPosition[0]!!
+        val currentCoordinates = correspondingPosition[move]!!
+        check(
+            Pair(
+                currentCoordinates.row - zeroCoordinates.row, currentCoordinates.column
+                        - zeroCoordinates.column
+            ) in adjacent
+        )
+        correspondingPosition[0] = Cell(currentCoordinates.row, currentCoordinates.column)
+        correspondingPosition[move] = Cell(zeroCoordinates.row, zeroCoordinates.column)
+        matrix[currentCoordinates] = 0
+        matrix[zeroCoordinates] = move
+
+    }
+    return matrix
+}
 
 /**
  * Очень сложная
