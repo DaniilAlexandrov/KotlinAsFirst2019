@@ -66,14 +66,7 @@ fun square(notation: String): Square {
  * Пример: rookMoveNumber(Square(3, 1), Square(6, 3)) = 2
  * Ладья может пройти через клетку (3, 3) или через клетку (6, 1) к клетке (6, 3).
  */
-fun rookMoveNumber(start: Square, end: Square): Int {
-    require((start.inside()) && (end.inside()))
-    return when {
-        start == end -> 0
-        (start.row == end.row) || (start.column == end.column) -> 1
-        else -> 2
-    }
-}
+fun rookMoveNumber(start: Square, end: Square): Int = rookTrajectory(start, end).size - 1
 
 /**
  * Средняя
@@ -90,6 +83,7 @@ fun rookMoveNumber(start: Square, end: Square): Int {
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
 fun rookTrajectory(start: Square, end: Square): List<Square> {
+    require((start.inside()) && (end.inside()))
     val route = mutableListOf(start)
     if (end == start) return route
     if ((start.row != end.row) && (start.column != end.column))
@@ -212,7 +206,6 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
  */
 fun kingMoveNumber(start: Square, end: Square): Int {
     require(start.inside() && end.inside())
-    if (start == end) return 0
     // Растояние Чебышёва.
     return max(abs(end.column - start.column), abs(end.row - start.row))
 }
@@ -235,7 +228,7 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
     require(start.inside() && end.inside())
     val route = mutableListOf(start)
     if (start == end) return route
-    val currentSquare = route.last()
+    var currentSquare = route.last()
     while (currentSquare != end) {
         when {
             (currentSquare.column == end.column) -> if (currentSquare.column > end.column)
@@ -253,6 +246,7 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
             (currentSquare.row < end.row && currentSquare.column < end.column) ->
                 route.add(Square(currentSquare.column + 1, currentSquare.row + 1))
         }
+        currentSquare = route.last()
     }
     return route
 }
