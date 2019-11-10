@@ -298,7 +298,7 @@ data class Holes(val rows: List<Int>, val columns: List<Int>)
  * К примеру, центральный элемент 12 = 1 + 2 + 4 + 5, элемент в левом нижнем углу 12 = 1 + 4 + 7 и так далее.
  */
 fun sumSubMatrix(matrix: Matrix<Int>): Matrix<Int> {
-    // Сначала считается сумма крайних элементов
+    // Сначала считается сумма крайних элементов.
     for (i in 1 until matrix.width) matrix[0, i] += matrix[0, i - 1]
     for (i in 1 until matrix.height) matrix[i, 0] += matrix[i - 1, 0]
     // Каждый некрайний элемент высчитывается как элемент сверху - элемент по диагонали + элемент слева.
