@@ -418,23 +418,11 @@ fun circleByTwoPoints(points: List<Point>, firstFixed: Point, secondFixed: Point
 fun minContainingCircle(vararg points: Point): Circle {
     require(points.isNotEmpty())
     if (points.size == 1) return Circle(points[0], 0.0)
-    var maxDiameter = -10.0
-    var firstMaxPoint = Point(0.0, 0.0)
-    var secondMaxPoint = Point(0.0, 0.0)
-    var longestSegment = Segment(Point(0.0, 0.0), Point(0.0, 0.0))
-    for (i in points.indices - 1)
-        for (j in i + 1 until points.size) {
-            if (points[i].distance(points[j]) > maxDiameter) {
-                maxDiameter = points[i].distance(points[j])
-                firstMaxPoint = points[i]
-                secondMaxPoint = points[j]
-                longestSegment = Segment(points[i], points[j])
-            }
-        }
-    var testCircle = circleByDiameter(longestSegment)
-    for (point in points) {
+    val diam = diameter(*points)
+    var testCircle = circleByDiameter(diam)
+    for (point in points.toSet() - diam.begin - diam.end) {
         if (!testCircle.contains(point)) {
-            testCircle = circleByThreePoints(firstMaxPoint, secondMaxPoint, point)
+            testCircle = circleByThreePoints(diam.begin, diam.end, point)
         }
     }
     return testCircle
