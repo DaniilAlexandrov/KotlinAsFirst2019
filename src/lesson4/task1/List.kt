@@ -3,6 +3,7 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
+import java.lang.StringBuilder
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -340,4 +341,98 @@ fun roman(n: Int): String {
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+val units = listOf(
+    "",
+    "один ",
+    "два ",
+    "три ",
+    "четыре ",
+    "пять ",
+    "шесть ",
+    "семь ",
+    "восемь ",
+    "девять "
+)
+val aroundTen = listOf(
+    "",
+    "одиннадцать ",
+    "двенадцать ",
+    "тринадцать ",
+    "четырнадцать ",
+    "пятнадцать ",
+    "шестнадцать ",
+    "семнадцать ",
+    "восемнадцать ",
+    "девятнадцать "
+)
+val dozens = listOf(
+    "",
+    "десять ",
+    "двадцать ",
+    "тридцать ",
+    "сорок ",
+    "пятьдесят ",
+    "шестьдесят ",
+    "семьдесят ",
+    "восемьдесят ",
+    "девяносто "
+)
+val hundreds = listOf(
+    "",
+    "сто ",
+    "двести ",
+    "триста ",
+    "четыреста ",
+    "пятьсот ",
+    "шестьсот ",
+    "семьсот ",
+    "восемьсот ",
+    "девятьсот "
+)
+
+fun properForm(n: Int): String {
+    val dozens = n % 100
+    val unit = n % 10
+    return when {
+        ((dozens in 4..21)) -> ("тысяч ")
+        (unit == 1) -> ("тысяча ")
+        ((unit > 4) || (unit == 0)) -> ("тысяч ")
+        else -> ("тысячи ")
+    }
+}
+
+fun threeByThreeSolver(n: Int, firstPart: Boolean): String {
+    val res = StringBuilder()
+    val thousand = n / 100
+    val lastDozen = n % 100
+    val dozen = lastDozen / 10
+    val unit = n % 10
+    res.append(hundreds[thousand])
+    if (lastDozen !in 11..19) {
+        res.append(dozens[dozen])
+        if (firstPart) {
+            when (unit) {
+                1 -> res.append("одна ")
+                2 -> res.append("две ")
+                else -> res.append(units[unit])
+            }
+        } else res.append(units[unit])
+    } else {
+        res.append(aroundTen[unit])
+    }
+    return if (firstPart) res.toString() + properForm(n) else res.toString()
+}
+
+fun russian(n: Int): String {
+    val res = StringBuilder()
+    if (n < 1000) res.append(threeByThreeSolver(n % 1000, false))
+    else {
+        res.append(threeByThreeSolver(n / 1000, true))
+        res.append(threeByThreeSolver(n % 1000, false))
+    }
+    return res.toString().trim()
+}
+
+//fun main() {
+//    println(russian(2))
+//}
