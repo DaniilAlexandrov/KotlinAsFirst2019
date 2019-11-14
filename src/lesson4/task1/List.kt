@@ -394,8 +394,8 @@ fun properForm(n: Int): String {
     val dozens = n % 100
     val unit = n % 10
     return when {
+        (unit == 1 && dozens != 11) -> ("тысяча ")
         ((dozens in 4..21)) -> ("тысяч ")
-        (unit == 1) -> ("тысяча ")
         ((unit > 4) || (unit == 0)) -> ("тысяч ")
         else -> ("тысячи ")
     }
@@ -433,6 +433,6 @@ fun russian(n: Int): String {
     return res.toString().trim()
 }
 
-//fun main() {
-//    println(russian(2))
-//}
+fun main() {
+    println(russian(911786))
+}
