@@ -290,7 +290,7 @@ fun circleByTwoPoints(points: List<Point>, firstFixed: Point, secondFixed: Point
         else tempMinCircle = circleByThreePoints(point, firstFixed, secondFixed)
     }
     return tempMinCircle
-} */
+}  */
 fun minContainingCircle(vararg points: Point): Circle {
     require(points.isNotEmpty())
     if (points.size == 1) return Circle(points[0], 0.0)
