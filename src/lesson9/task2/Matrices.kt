@@ -335,13 +335,12 @@ fun canOpenLock(key: Matrix<Int>, lock: Matrix<Int>): Triple<Boolean, Int, Int> 
     for (optimalHeight in 0..heightDiff) {
         for (optimalWidth in 0..widthDiff) {
             var matchDetector = true
-            for (i in 0 until key.height) {
+            FailureChecker@ for (i in 0 until key.height) {
                 for (j in 0 until key.width)
                     if (key[i, j] == lock[i + optimalHeight, j + optimalWidth]) {
                         matchDetector = false
-                        //break
+                        break@FailureChecker
                     }
-                //break Kinda not sure whether removing this line wasn't gonna lead to computation timeout.
             }
             if (matchDetector) return Triple(true, optimalHeight, optimalWidth)
         }
