@@ -49,6 +49,18 @@ operator fun Matrix<Int>.plus(other: Matrix<Int>): Matrix<Int> {
     return result
 }
 
+fun colIncrement(matrix: Matrix<Int>) {
+    for (i in 1 until matrix.height)
+        matrix[i, 0] += matrix[i - 1, 0]
+}
+
+fun rowIncrement(matrix: Matrix<Int>) {
+    for (i in 1 until matrix.width)
+        matrix[0, i] += matrix[0, i - 1]
+}
+
+
+
 /**
  * Сложная
  *
@@ -298,15 +310,22 @@ data class Holes(val rows: List<Int>, val columns: List<Int>)
  *
  * К примеру, центральный элемент 12 = 1 + 2 + 4 + 5, элемент в левом нижнем углу 12 = 1 + 4 + 7 и так далее.
  */
-fun sumSubMatrix(matrix: Matrix<Int>): Matrix<Int> {
-    // Сначала считается сумма крайних элементов.
-    for (i in 1 until matrix.width) matrix[0, i] += matrix[0, i - 1]
-    for (i in 1 until matrix.height) matrix[i, 0] += matrix[i - 1, 0]
-    // Каждый некрайний элемент высчитывается как элемент сверху - элемент по диагонали + элемент слева.
+
+fun adjacentIncrement(matrix: Matrix<Int>) {
+    val adjacent = listOf(-1 to 0, -1 to -1, 0 to -1)
     for (i in 1 until matrix.height)
         for (j in 1 until matrix.width)
-            matrix[i, j] += matrix[i - 1, j] - matrix[i - 1, j - 1] + matrix[i, j - 1]
+            for ((dRow, dCol) in adjacent) {
+                if (dRow == -1 && dCol == -1) matrix[i, j] -= matrix[i + dRow, j + dCol]
+                else matrix[i, j] += matrix[i + dRow, j + dCol]
+            }
 
+}
+
+fun sumSubMatrix(matrix: Matrix<Int>): Matrix<Int> {
+    colIncrement(matrix)
+    rowIncrement(matrix)
+    adjacentIncrement(matrix)
     return matrix
 }
 
@@ -432,7 +451,6 @@ fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> {
         correspondingPosition[move] = Cell(zeroCoordinates.row, zeroCoordinates.column)
         matrix[currentCoordinates] = 0
         matrix[zeroCoordinates] = move
-
     }
     return matrix
 }
