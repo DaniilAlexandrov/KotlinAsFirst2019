@@ -2,6 +2,7 @@
 
 package lesson8.task2
 
+import lesson8.task3.Graph
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -274,7 +275,11 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
  * Пример: knightMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Конь может последовательно пройти через клетки (5, 2) и (4, 4) к клетке (6, 3).
  */
-fun knightMoveNumber(start: Square, end: Square): Int = TODO()
+fun knightMoveNumber(start: Square, end: Square): Int {
+    require(start.inside() && end.inside())
+    if (start == end) return 0
+    return knightTrajectory(start, end).size - 1
+}
 
 /**
  * Очень сложная
@@ -296,9 +301,36 @@ fun knightMoveNumber(start: Square, end: Square): Int = TODO()
  *
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun knightTrajectory(start: Square, end: Square): List<Square> {
-    require(start.inside() && end.inside())
+fun toSquare(a: List<String>): List<Square> = a.map { Square((it.first().toInt() - 96), (it.last().toInt() - 48)) }
+
+fun connectionGeneration(): Graph {
+    val board = Graph()
+    for (col in 1..8)
+        for (row in 1..8)
+            board.addVertex(Square(col, row).notation())
     val adjacent =
         listOf(Pair(1, 2), Pair(-1, -2), Pair(2, 1), Pair(-2, -1), Pair(-1, 2), Pair(1, -2), Pair(2, -1), Pair(-2, 1))
-    TODO()
+    for (i in 1..8)
+        for (j in 1..8)
+            for ((dX, dY) in adjacent) {
+                val nextHop = Square(i + dX, j + dY)
+                if (nextHop.row in 1..8 && nextHop.column in 1..8) board.connect(
+                    Square(i, j).notation(),
+                    nextHop.notation()
+                )
+            }
+    return board
 }
+
+fun knightTrajectory(start: Square, end: Square): List<Square> {
+    require(start.inside() && end.inside())
+    if (start == end) return listOf(start)
+    val board = connectionGeneration()
+    val res = board.path(start.notation(), end.notation())
+    return toSquare(res)
+}
+
+//fun main() {
+//    val list = listOf("a6", "b4")
+//   println(toSquare(list))
+//}
