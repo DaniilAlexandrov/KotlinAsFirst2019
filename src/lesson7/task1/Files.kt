@@ -4,6 +4,7 @@ package lesson7.task1
 
 import lesson3.task1.digitNumber
 import java.io.File
+import java.util.*
 import kotlin.math.max
 
 
@@ -478,8 +479,41 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
 ///////////////////////////////конец файла//////////////////////////////////////////////////////////////////////////////
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
+
 fun markdownToHtmlLists(inputName: String, outputName: String) {
-    TODO()
+    val lines = File(inputName).readLines()
+    val builder = StringBuilder()
+    val stack = Stack<String>()
+    var previousOffset = -10
+    val offsetTemplate = Regex("    ")
+    builder.append("<html><body>")
+    for (line in lines) {
+        val currentOffset = offsetTemplate.findAll(line).count()
+        val offsetExclusion = line.replace(offsetTemplate, "")
+        val modifiedLine = Regex(" ").split(offsetExclusion, 2) // Preceding symbol - Text.
+        val ulDetector = modifiedLine[0] == "*"
+        val lineContents = (modifiedLine.toMutableList().removeAt(1))
+        if (currentOffset > previousOffset) {
+            if (ulDetector) {
+                builder.append("<ul>")
+                stack.push("</ul>")
+            } else {
+                builder.append("<ol>")
+                stack.push("</ol>")
+            }
+        } else if (currentOffset == previousOffset) builder.append(stack.pop())
+        else
+            for (i in 1..3)
+                builder.append(stack.pop())
+        previousOffset = currentOffset
+        builder.append("<li>")
+        builder.append(lineContents)
+        stack.push("</li>")
+    }
+    while (stack.isNotEmpty())
+        builder.append(stack.pop())
+    builder.append("</body></html>")
+    File(outputName).writeText(builder.toString())
 }
 
 /**

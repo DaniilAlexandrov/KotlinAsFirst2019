@@ -332,5 +332,5 @@ fun knightTrajectory(start: Square, end: Square): List<Square> {
 
 //fun main() {
 //    val list = listOf("a6", "b4")
-//   println(toSquare(list))
+//   println(list + "c9")
 //}
