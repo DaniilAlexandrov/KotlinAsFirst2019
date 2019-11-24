@@ -489,8 +489,7 @@ fun markdownToHtmlLists(inputName: String, outputName: String) {
     builder.append("<html><body>")
     for (line in lines) {
         val currentOffset = offsetTemplate.findAll(line).count()
-        val offsetExclusion = line.replace(offsetTemplate, "")
-        val modifiedLine = Regex(" ").split(offsetExclusion, 2) // Preceding symbol - Text.
+        val modifiedLine = Regex(" ").split(line.trim(), 2) // Preceding symbol - Text.
         val ulDetector = modifiedLine[0] == "*"
         val lineContents = (modifiedLine.toMutableList().removeAt(1))
         if (currentOffset > previousOffset) {
