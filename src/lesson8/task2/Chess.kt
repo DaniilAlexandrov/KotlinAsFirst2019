@@ -227,26 +227,28 @@ fun kingMoveNumber(start: Square, end: Square): Int {
  */
 fun kingTrajectory(start: Square, end: Square): List<Square> {
     require(start.inside() && end.inside())
-    val route = mutableListOf(start)
+    var currentSquare = start
+    val route = mutableListOf(currentSquare)
     if (start == end) return route
-    var currentSquare = route.last()
     while (currentSquare != end) {
-        when {
-            (currentSquare.column == end.column) -> if (currentSquare.column > end.column)
-                route.add(Square(currentSquare.column, currentSquare.row - 1))
-            else route.add(Square(currentSquare.column, currentSquare.row + 1))
-            (currentSquare.row == end.row) -> if (currentSquare.row > end.row)
-                route.add(Square(currentSquare.column - 1, currentSquare.row))
-            else route.add(Square(currentSquare.column + 1, currentSquare.row))
-            (currentSquare.row > end.row && currentSquare.column > end.column) ->
-                route.add(Square(currentSquare.column - 1, currentSquare.row - 1))
-            (currentSquare.row > end.row && currentSquare.column < end.column) ->
-                route.add(Square(currentSquare.column + 1, currentSquare.row - 1))
-            (currentSquare.row < end.row && currentSquare.column > end.column) ->
-                route.add(Square(currentSquare.column - 1, currentSquare.row + 1))
-            (currentSquare.row < end.row && currentSquare.column < end.column) ->
-                route.add(Square(currentSquare.column + 1, currentSquare.row + 1))
-        }
+        currentSquare =
+            when {
+                (currentSquare.column == end.column) -> if (currentSquare.column > end.column)
+                    (Square(currentSquare.column, currentSquare.row - 1))
+                else (Square(currentSquare.column, currentSquare.row + 1))
+                (currentSquare.row == end.row) -> if (currentSquare.row > end.row)
+                    (Square(currentSquare.column - 1, currentSquare.row))
+                else (Square(currentSquare.column + 1, currentSquare.row))
+                (currentSquare.row > end.row && currentSquare.column > end.column) ->
+                    (Square(currentSquare.column - 1, currentSquare.row - 1))
+                (currentSquare.row > end.row && currentSquare.column < end.column) ->
+                    (Square(currentSquare.column + 1, currentSquare.row - 1))
+                (currentSquare.row < end.row && currentSquare.column > end.column) ->
+                    (Square(currentSquare.column - 1, currentSquare.row + 1))
+                else ->
+                    (Square(currentSquare.column + 1, currentSquare.row + 1))
+            }
+        route.add(currentSquare)
         currentSquare = route.last()
     }
     return route
