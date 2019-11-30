@@ -301,7 +301,8 @@ fun knightMoveNumber(start: Square, end: Square): Int {
  *
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun toSquare(a: List<String>): List<Square> = a.map { Square((it.first().toInt() - 96), (it.last().toInt() - 48)) }
+// Looked too dumb.
+// fun toSquare(a: List<String>): List<Square> = a.map { Square((it.first().toInt() - 96), (it.last().toInt() - 48)) }
 
 fun connectionGeneration(): Graph {
     val board = Graph()
@@ -326,8 +327,7 @@ fun knightTrajectory(start: Square, end: Square): List<Square> {
     require(start.inside() && end.inside())
     if (start == end) return listOf(start)
     val board = connectionGeneration()
-    val res = board.path(start.notation(), end.notation())
-    return toSquare(res)
+    return board.path(start.notation(), end.notation())
 }
 
 //fun main() {
