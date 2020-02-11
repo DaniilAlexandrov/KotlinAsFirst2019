@@ -30,11 +30,10 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
     val value: Double
         get() {
             return if (actualDimension.length == 1) actualValue
-            else actualValue * if (actualDimension.first() == 'K')
-                DimensionPrefix.KILO.multiplier else
-                DimensionPrefix.MILLI.multiplier
-
-
+            else actualValue * when (actualDimension.first()) { // С помощью when легко добавлять новые размерности.
+                'K' -> DimensionPrefix.KILO.multiplier
+                else -> DimensionPrefix.MILLI.multiplier
+            }
         }
 
     /**
@@ -42,9 +41,10 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
      */
     val dimension: Dimension
         get() {
-            return if (actualDimension.last() == 'm')
-                Dimension.METER
-            else Dimension.GRAM
+            return when (actualDimension.last()) {
+                'm' -> Dimension.METER
+                else -> Dimension.GRAM // С помощью when легко добавлять новые размерности.
+            }
         }
 
     /**
