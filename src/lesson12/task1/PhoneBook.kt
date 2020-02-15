@@ -18,8 +18,9 @@ package lesson12.task1
  * Класс должен иметь конструктор по умолчанию (без параметров).
  */
 class PhoneBook {
-    private val book = mutableMapOf<String, Set<String>>()
+    private val book = mutableMapOf<String, MutableSet<String>>()
     private val nameTemplate = Regex("""([A-ZА-ЯЁ][a-zа-яё]*) [A-ZА-ЯЁ][a-zа-я]*""")
+    private val phoneRestrictions = Regex("""[^\d+*#\-]""")
     /**
      * Добавить человека.
      * Возвращает true, если человек был успешно добавлен,
@@ -58,19 +59,19 @@ class PhoneBook {
      * либо такой номер телефона зарегистрирован за другим человеком.
      */
     fun addPhone(name: String, phone: String): Boolean {
+        require(name.matches(nameTemplate) && !phone.contains(phoneRestrictions))
         for ((human, numbers) in book) {
-            require(name in book)
-            if (phone in numbers) {
+            if (phone in numbers || name !in book) {
                 return false
             }
             if (human == name) {
-                book[name] = book[name]!! + phone
+                numbers.add(phone)
                 return true
             }
         }
         return false
     }
-    
+
     /**
      * Убрать номер телефона.
      * Возвращает true, если номер был успешно удалён,
@@ -78,9 +79,11 @@ class PhoneBook {
      * либо у него не было такого номера телефона.
      */
     fun removePhone(name: String, phone: String): Boolean {
+        require(name.matches(nameTemplate) && !phone.contains(phoneRestrictions))
+        if (name !in book) return false
         require(name in book)
         if (phone in book[name]!!) {
-            book[name] = book[name]!! - phone
+            book[name]!!.remove(phone)
             return true
         }
         return false
@@ -103,6 +106,7 @@ class PhoneBook {
      * Если такого номера нет в книге, вернуть null.
      */
     fun humanByPhone(phone: String): String? {
+        require(!phone.contains(phoneRestrictions))
         for ((human, numbers) in book) {
             if (phone in numbers) {
                 return human
@@ -119,9 +123,10 @@ class PhoneBook {
     override fun equals(other: Any?): Boolean {
         require(other is PhoneBook)
         for ((name, phones) in book) {
-            return other.book[name] == phones
+            if (other.book[name] != phones)
+                return false
         }
-        return false
+        return true
     }
 
     override fun hashCode(): Int = javaClass.hashCode()
