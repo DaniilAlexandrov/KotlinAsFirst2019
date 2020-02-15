@@ -17,23 +17,64 @@ package lesson11.task1
  * - во всех остальных случаях следует бросить IllegalArgumentException
  */
 
-fun valueDeterminant(s: String) = Regex("""\d+(\.\d+)?""").find(s)!!.value.toDouble()
-
-fun prefixDeterminant(s: String) = Regex("""[Km]?[mg]""").find(s)!!.value
 
 class DimensionalValue(private val actualValue: Double, private val actualDimension: String) :
     Comparable<DimensionalValue> {
+    private fun fetchPrefix(k: String): String {
+        var s = k
+        var res = 'a'
+        while (s !in getDimensions()) {
+            res = s.first()
+            s = s.toMutableList().drop(1).joinToString(separator = "")
+        }
+        return res.toString()
+    }
+
+    private fun fetchDimension(k: String): String =
+        k.toMutableList().minus(fetchPrefix(k).toMutableList()).joinToString(separator = "")
+
+    companion object {
+        private fun getPrefixes(): MutableSet<String> {
+            val dim = mutableSetOf<String>()
+            for (dimension in DimensionPrefix.values()) {
+                dim.add(dimension.abbreviation)
+            }
+            return dim
+        }
+
+        private fun getDimensions(): MutableSet<String> {
+            val dim = mutableSetOf<String>()
+            for (dimension in Dimension.values()) {
+                dim.add(dimension.abbreviation)
+            }
+            return dim
+        }
+
+        fun valueDeterminant(s: String) =
+            Regex("""\d+(\.\d+)?""").find(s)?.value?.toDouble() ?: throw IllegalArgumentException()
+
+        fun prefixDeterminant(s: String) =
+            Regex(
+                """[${getPrefixes().joinToString(separator = "")}}]?[${getDimensions().joinToString(separator = "")}]"""
+            ).find(s)?.value ?: throw IllegalArgumentException()
+    }
+
+
+    private fun fetchMultiplier(k: String): Double {
+        for (dimension in DimensionPrefix.values()) {
+            if (k == dimension.abbreviation)
+                return dimension.multiplier
+        }
+        return 0.0
+    }
 
     /**
      * Величина с БАЗОВОЙ размерностью (например для 1.0Kg следует вернуть результат в граммах -- 1000.0)
      */
     val value: Double
         get() {
-            return if (actualDimension.length == 1) actualValue
-            else actualValue * when (actualDimension.first()) { // С помощью when легко добавлять новые размерности.
-                'K' -> DimensionPrefix.KILO.multiplier
-                else -> DimensionPrefix.MILLI.multiplier
-            }
+            return if (actualDimension in getDimensions()) actualValue
+            else actualValue * fetchMultiplier(fetchPrefix(actualDimension))
         }
 
     /**
@@ -41,9 +82,10 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
      */
     val dimension: Dimension
         get() {
-            return when (actualDimension.last()) {
-                'm' -> Dimension.METER
-                else -> Dimension.GRAM // С помощью when легко добавлять новые размерности.
+            return when (fetchDimension(actualDimension)) {
+                "g" -> Dimension.GRAM
+                "Hz" -> Dimension.HERTZ
+                else -> Dimension.METER // Если есть какой-то способ делать это более автоматически, можно, пожалуйста, намек?
             }
         }
 
@@ -118,7 +160,8 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
  */
 enum class Dimension(val abbreviation: String) {
     METER("m"),
-    GRAM("g");
+    GRAM("g"),
+    HERTZ("Hz");
 }
 
 /**
@@ -126,5 +169,6 @@ enum class Dimension(val abbreviation: String) {
  */
 enum class DimensionPrefix(val abbreviation: String, val multiplier: Double) {
     KILO("K", 1000.0),
-    MILLI("m", 0.001);
+    MILLI("m", 0.001),
+    MEGA("M", 1000000.0);
 }
