@@ -20,27 +20,21 @@ package lesson11.task1
 
 class DimensionalValue(private val actualValue: Double, private val actualDimension: String) :
     Comparable<DimensionalValue> {
-    private fun fetchPrefix(k: String): String {
-        var s = k
-        var res = 'a'
-        while (s !in getDimensions()) {
-            res = s.first()
-            s = s.toMutableList().drop(1).joinToString(separator = "")
-        }
-        return res.toString()
-    }
-
-    private fun fetchDimension(k: String): String =
-        k.toMutableList().minus(fetchPrefix(k).toMutableList()).joinToString(separator = "")
 
     companion object {
-        private fun getPrefixes(): MutableSet<String> {
-            val dim = mutableSetOf<String>()
-            for (dimension in DimensionPrefix.values()) {
-                dim.add(dimension.abbreviation)
+        private fun fetchPrefix(k: String): String {
+            var s = k
+            var res = ""
+            while (s !in dimensions) {
+                res = s.first().toString()
+                s = s.toMutableList().drop(1).joinToString(separator = "")
             }
-            return dim
+            return if (res !in prefixes) ""
+            else res
         }
+
+        private val dimensions = getDimensions().joinToString(separator = "")
+        private val prefixes = getPrefixes().joinToString(separator = "")
 
         private fun getDimensions(): MutableSet<String> {
             val dim = mutableSetOf<String>()
@@ -50,30 +44,58 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
             return dim
         }
 
-        fun valueDeterminant(s: String) =
-            Regex("""\d+(\.\d+)?""").find(s)?.value?.toDouble() ?: throw IllegalArgumentException()
-
-        fun prefixDeterminant(s: String) =
-            Regex(
-                """[${getPrefixes().joinToString(separator = "")}}]?[${getDimensions().joinToString(separator = "")}]"""
-            ).find(s)?.value ?: throw IllegalArgumentException()
-    }
-
-
-    private fun fetchMultiplier(k: String): Double {
-        for (dimension in DimensionPrefix.values()) {
-            if (k == dimension.abbreviation)
-                return dimension.multiplier
+        private fun getPrefixes(): MutableSet<String> {
+            val dim = mutableSetOf<String>()
+            for (dimension in DimensionPrefix.values()) {
+                dim.add(dimension.abbreviation)
+            }
+            return dim
         }
-        return 0.0
+
+        private fun fetchDimension(k: String): String {
+            return if (fetchPrefix(k) == "") k.split(" ").last() else
+                k.split(" ").last().toMutableList().drop(1).joinToString(separator = "")
+        }
+
+        private fun fetchDimensionName(k: String): Dimension {
+            val a = fetchDimension(k)
+            require(a in dimensions)
+            for (dimension in Dimension.values()) {
+                if (a == dimension.abbreviation)
+                    return dimension
+            }
+            throw IllegalArgumentException()
+        }
+
+        private fun valueDeterminant(s: String): Double {
+            val value = s.split(" ").first()
+            require(value.matches(Regex("""-?\d+(\.\d+)?""")))
+            return value.toDouble()
+        }
+
+        private fun dimensionDeterminant(s: String): String {
+            val dimension = s.split(" ").last()
+            require(fetchDimension(dimension) in dimensions)
+            require(fetchPrefix(dimension) in prefixes)
+            return dimension
+        }
+
+        private fun fetchMultiplier(k: String): Double {
+            for (dimension in DimensionPrefix.values()) {
+                if (k == dimension.abbreviation)
+                    return dimension.multiplier
+            }
+            return 1.0
+        }
     }
+
 
     /**
      * Величина с БАЗОВОЙ размерностью (например для 1.0Kg следует вернуть результат в граммах -- 1000.0)
      */
     val value: Double
         get() {
-            return if (actualDimension in getDimensions()) actualValue
+            return if (actualDimension in dimensions) actualValue
             else actualValue * fetchMultiplier(fetchPrefix(actualDimension))
         }
 
@@ -81,18 +103,13 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
      * БАЗОВАЯ размерность (опять-таки для 1.0Kg следует вернуть GRAM)
      */
     val dimension: Dimension
-        get() {
-            return when (fetchDimension(actualDimension)) {
-                "g" -> Dimension.GRAM
-                "Hz" -> Dimension.HERTZ
-                else -> Dimension.METER // Если есть какой-то способ делать это более автоматически, можно, пожалуйста, намек?
-            }
-        }
+        get() = fetchDimensionName(actualDimension)
 
     /**
      * Конструктор из строки. Формат строки: значение пробел размерность (1 Kg, 3 mm, 100 g и так далее).
      */
-    constructor(s: String) : this(valueDeterminant(s), prefixDeterminant(s))
+    constructor(s: String) : this(valueDeterminant(s), dimensionDeterminant(s))
+
 
     /**
      * Сложение с другой величиной. Если базовая размерность разная, бросить IllegalArgumentException
@@ -111,7 +128,10 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
     /**
      * Вычитание другой величины. Если базовая размерность разная, бросить IllegalArgumentException
      */
-    operator fun minus(other: DimensionalValue): DimensionalValue = this + other.unaryMinus()
+    operator fun minus(other: DimensionalValue): DimensionalValue {
+        require(dimension == other.dimension)
+        return this + other.unaryMinus()
+    }
 
     /**
      * Умножение на число
@@ -170,5 +190,6 @@ enum class Dimension(val abbreviation: String) {
 enum class DimensionPrefix(val abbreviation: String, val multiplier: Double) {
     KILO("K", 1000.0),
     MILLI("m", 0.001),
+    NANO("n", 0.000000001),
     MEGA("M", 1000000.0);
 }
