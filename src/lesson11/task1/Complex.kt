@@ -24,8 +24,8 @@ class Complex(val re: Double, val im: Double) {
      * Конструктор из строки вида x+yi
      */
     constructor(s: String) : this(
-        Regex("""-?\d+(\.\d+)*""").findAll(s).elementAt(0).value.toDouble(),
-        Regex("""-?\d+(\.\d+)*""").findAll(s).elementAt(1).value.toDouble()
+        Regex("""-?\d+(\.\d+)?""").findAll(s).elementAt(0).value.toDouble(),
+        Regex("""-?\d+(\.\d+)?""").findAll(s).elementAt(1).value.toDouble()
     )
 
     /**
