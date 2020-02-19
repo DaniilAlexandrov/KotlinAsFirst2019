@@ -18,7 +18,7 @@ package lesson12.task1
  * Класс должен иметь конструктор по умолчанию (без параметров).
  */
 class PhoneBook {
-    private val book = mutableMapOf<String, MutableSet<String>>()
+    private val book = mutableMapOf<String, Set<String>>()
     private val nameTemplate = Regex("""([A-ZА-ЯЁ][a-zа-яё]*) [A-ZА-ЯЁ][a-zа-я]*""")
     private val phoneRestrictions = Regex("""[^\d+*#\-]""")
     /**
@@ -60,12 +60,13 @@ class PhoneBook {
      */
     fun addPhone(name: String, phone: String): Boolean {
         require(name.matches(nameTemplate) && !phone.contains(phoneRestrictions))
+        if (name !in book) return false
         for ((human, numbers) in book) {
-            if (phone in numbers || name !in book) {
+            if (phone in numbers) {
                 return false
             }
             if (human == name) {
-                numbers.add(phone)
+                book[name] = book[name]!! + phone
                 return true
             }
         }
@@ -80,10 +81,9 @@ class PhoneBook {
      */
     fun removePhone(name: String, phone: String): Boolean {
         require(name.matches(nameTemplate) && !phone.contains(phoneRestrictions))
-        if (name !in book) return false
-        require(name in book)
-        if (phone in book[name]!!) {
-            book[name]!!.remove(phone)
+        val temp = book[name] ?: return false
+        if (phone in temp) {
+            book[name] = temp - phone
             return true
         }
         return false
@@ -95,11 +95,9 @@ class PhoneBook {
      */
     fun phones(name: String): Set<String> {
         require(name.matches(nameTemplate))
-        if (name in book) {
-            return book[name]!!
-        }
-        return emptySet()
+        return book.getOrDefault(name, emptySet())
     }
+
 
     /**
      * Вернуть имя человека по заданному номеру телефона.
@@ -115,6 +113,14 @@ class PhoneBook {
         return null
     }
 
+    private fun names(): MutableSet<String> {
+        val res = mutableSetOf<String>()
+        for (name in book.keys) {
+            res.add(name)
+        }
+        return res
+    }
+
     /**
      * Две телефонные книги равны, если в них хранится одинаковый набор людей,
      * и каждому человеку соответствует одинаковый набор телефонов.
@@ -122,6 +128,7 @@ class PhoneBook {
      */
     override fun equals(other: Any?): Boolean {
         require(other is PhoneBook)
+        if (names() != other.names()) return false
         for ((name, phones) in book) {
             if (other.book[name] != phones)
                 return false
