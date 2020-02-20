@@ -136,5 +136,5 @@ class PhoneBook {
         return true
     }
 
-    override fun hashCode(): Int = javaClass.hashCode()
+    override fun hashCode(): Int = book.hashCode()
 }

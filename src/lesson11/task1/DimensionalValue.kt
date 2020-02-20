@@ -172,7 +172,7 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
         }
     }
 
-    override fun hashCode(): Int = javaClass.hashCode()
+    override fun hashCode(): Int = DimensionalValue.hashCode()
 }
 
 /**
