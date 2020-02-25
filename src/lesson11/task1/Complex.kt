@@ -14,6 +14,15 @@ import kotlin.math.pow
  * Аргументы конструктора -- вещественная и мнимая часть числа.
  */
 class Complex(val re: Double, val im: Double) {
+    companion object {
+        private fun realDeterminant(s: String): Double {
+            require(s.matches(Regex("""-?\d+(\.\d+)? ?[+-]? ?\d+(\.\d+)?i""")))
+            return Regex("""-?\d+(\.\d+)?""").findAll(s).elementAt(0).value.toDouble()
+        }
+
+        private fun imaginaryDeterminant(s: String): Double =
+            Regex("""-?\d+(\.\d+)?""").findAll(s).elementAt(1).value.toDouble()
+    }
 
     /**
      * Конструктор из вещественного числа
@@ -23,10 +32,8 @@ class Complex(val re: Double, val im: Double) {
     /**
      * Конструктор из строки вида x+yi
      */
-    constructor(s: String) : this(
-        Regex("""-?\d+(\.\d+)?""").findAll(s).elementAt(0).value.toDouble(),
-        Regex("""-?\d+(\.\d+)?""").findAll(s).elementAt(1).value.toDouble()
-    )
+
+    constructor(s: String) : this(realDeterminant(s), imaginaryDeterminant(s))
 
     /**
      * Сложение.
