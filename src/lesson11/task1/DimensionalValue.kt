@@ -43,7 +43,7 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
             }
             return dim
         }
-
+        
         private fun getPrefixes(): MutableSet<String> {
             val dim = mutableSetOf<String>()
             for (dimension in DimensionPrefix.values()) {
@@ -68,6 +68,7 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
         }
 
         private fun valueDeterminant(s: String): Double {
+            require(s.matches(Regex("""-?\d+(\.\d+)? [A-Za-z]+""")))
             val value = s.split(" ").first()
             require(value.matches(Regex("""-?\d+(\.\d+)?""")))
             return value.toDouble()

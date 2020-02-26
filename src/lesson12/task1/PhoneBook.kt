@@ -58,6 +58,8 @@ class PhoneBook {
      * либо у него уже был такой номер телефона,
      * либо такой номер телефона зарегистрирован за другим человеком.
      */
+    private val addedNumberTracker = mutableSetOf<String>()
+
     fun addPhone(name: String, phone: String): Boolean {
         require(name.matches(nameTemplate) && !phone.contains(phoneRestrictions))
         if (name !in book) return false
@@ -65,7 +67,8 @@ class PhoneBook {
             if (phone in numbers) {
                 return false
             }
-            if (human == name) {
+            if (human == name && phone !in addedNumberTracker) {
+                addedNumberTracker.add(phone)
                 book[name] = book[name]!! + phone
                 return true
             }
@@ -81,9 +84,9 @@ class PhoneBook {
      */
     fun removePhone(name: String, phone: String): Boolean {
         require(name.matches(nameTemplate) && !phone.contains(phoneRestrictions))
-        val temp = book[name] ?: return false
-        if (phone in temp) {
-            book[name] = temp - phone
+        val personPhones = book[name] ?: return false
+        if (phone in personPhones) {
+            book[name] = personPhones - phone
             return true
         }
         return false
@@ -113,27 +116,16 @@ class PhoneBook {
         return null
     }
 
-    private fun names(): MutableSet<String> {
-        val res = mutableSetOf<String>()
-        for (name in book.keys) {
-            res.add(name)
-        }
-        return res
-    }
-
     /**
      * Две телефонные книги равны, если в них хранится одинаковый набор людей,
      * и каждому человеку соответствует одинаковый набор телефонов.
      * Порядок людей / порядок телефонов в книге не должен иметь значения.
      */
+
     override fun equals(other: Any?): Boolean {
-        require(other is PhoneBook)
-        if (names() != other.names()) return false
-        for ((name, phones) in book) {
-            if (other.book[name] != phones)
-                return false
-        }
-        return true
+        return if (other is PhoneBook) {
+            this.book == other.book
+        } else false
     }
 
     override fun hashCode(): Int = book.hashCode()
