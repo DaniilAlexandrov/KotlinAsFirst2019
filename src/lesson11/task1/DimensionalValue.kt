@@ -17,23 +17,18 @@ package lesson11.task1
  * - во всех остальных случаях следует бросить IllegalArgumentException
  */
 
-
 class DimensionalValue(private val actualValue: Double, private val actualDimension: String) :
     Comparable<DimensionalValue> {
 
     companion object {
+
         private fun fetchPrefix(k: String): String {
-            var s = k
-            var res = ""
-            while (s !in dimensions) {
-                res = s.first().toString()
-                s = s.toMutableList().drop(1).joinToString(separator = "")
-            }
-            return if (res !in prefixes) ""
+            val res = k.first().toString()
+            return if (res !in prefixes || k.removeRange(0..0) == "") ""
             else res
         }
 
-        private val dimensions = getDimensions().joinToString(separator = "")
+        private val dimensions = getDimensions()
         private val prefixes = getPrefixes().joinToString(separator = "")
 
         private fun getDimensions(): MutableSet<String> {
@@ -43,7 +38,7 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
             }
             return dim
         }
-        
+
         private fun getPrefixes(): MutableSet<String> {
             val dim = mutableSetOf<String>()
             for (dimension in DimensionPrefix.values()) {
@@ -54,7 +49,8 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
 
         private fun fetchDimension(k: String): String {
             return if (fetchPrefix(k) == "") k.split(" ").last() else
-                k.split(" ").last().toMutableList().drop(1).joinToString(separator = "")
+                k.split(" ").last().removeRange(0..0)
+
         }
 
         private fun fetchDimensionName(k: String): Dimension {
@@ -70,7 +66,6 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
         private fun valueDeterminant(s: String): Double {
             require(s.matches(Regex("""-?\d+(\.\d+)? [A-Za-z]+""")))
             val value = s.split(" ").first()
-            require(value.matches(Regex("""-?\d+(\.\d+)?""")))
             return value.toDouble()
         }
 
@@ -89,7 +84,6 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
             return 1.0
         }
     }
-
 
     /**
      * Величина с БАЗОВОЙ размерностью (например для 1.0Kg следует вернуть результат в граммах -- 1000.0)
@@ -173,7 +167,12 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
         }
     }
 
-    override fun hashCode(): Int = DimensionalValue.hashCode()
+    override fun hashCode(): Int {
+        var result = actualValue.hashCode()
+        result = 31 * result + actualDimension.hashCode()
+        return result
+    }
+
 }
 
 /**

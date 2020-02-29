@@ -58,7 +58,6 @@ class PhoneBook {
      * либо у него уже был такой номер телефона,
      * либо такой номер телефона зарегистрирован за другим человеком.
      */
-    private val addedNumberTracker = mutableSetOf<String>()
 
     fun addPhone(name: String, phone: String): Boolean {
         require(name.matches(nameTemplate) && !phone.contains(phoneRestrictions))
@@ -67,8 +66,7 @@ class PhoneBook {
             if (phone in numbers) {
                 return false
             }
-            if (human == name && phone !in addedNumberTracker) {
-                addedNumberTracker.add(phone)
+            if (human == name) {
                 book[name] = book[name]!! + phone
                 return true
             }
