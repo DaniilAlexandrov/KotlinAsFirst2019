@@ -24,7 +24,7 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
 
         private fun fetchPrefix(k: String): String {
             val res = k.first().toString()
-            return if (res !in prefixes || k.removeRange(0..0) == "") ""
+            return if (res !in prefixes || k.drop(1) == "") ""
             else res
         }
 
@@ -49,7 +49,7 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
 
         private fun fetchDimension(k: String): String {
             return if (fetchPrefix(k) == "") k.split(" ").last() else
-                k.split(" ").last().removeRange(0..0)
+                k.split(" ").last().drop(1)
 
         }
 
@@ -145,7 +145,7 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
      * Деление на другую величину. Если базовая размерность разная, бросить IllegalArgumentException
      */
     operator fun div(other: DimensionalValue): Double {
-        require(dimension == other.dimension)
+        require(dimension == other.dimension && other.value != 0.0)
         return value / other.value
     }
 
