@@ -62,8 +62,7 @@ class PhoneBook {
     fun addPhone(name: String, phone: String): Boolean {
         require(name.matches(nameTemplate) && !phone.contains(phoneRestrictions))
         if (name !in book) return false
-        val checkedNumbers = mutableSetOf<String>()
-        book.values.map { it.forEach { it1 -> checkedNumbers.add(it1) } }
+        val checkedNumbers = book.values.flatten().toSet()
         for (human in book.keys) {
             if (phone in checkedNumbers) {
                 return false
@@ -129,4 +128,18 @@ class PhoneBook {
     }
 
     override fun hashCode(): Int = book.hashCode()
+}
+fun main() {
+    val a = PhoneBook()
+    a.addHuman("Марат А")
+    a.addHuman("Даниил А")
+
+    a.addPhone("Марат А", "1")
+    a.addPhone("Марат А", "2")
+
+
+    println(a.addPhone("Даниил А", "3"))
+    println(a.addPhone("Марат А", "3"))
+    println("Марат: " + a.phones("Марат А"))
+    println("Даниил: " + a.phones("Даниил А"))
 }
