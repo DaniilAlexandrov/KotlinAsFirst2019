@@ -62,8 +62,10 @@ class PhoneBook {
     fun addPhone(name: String, phone: String): Boolean {
         require(name.matches(nameTemplate) && !phone.contains(phoneRestrictions))
         if (name !in book) return false
-        for ((human, numbers) in book) {
-            if (phone in numbers) {
+        val checkedNumbers = mutableSetOf<String>()
+        book.values.map { it.forEach { it1 -> checkedNumbers.add(it1) } }
+        for (human in book.keys) {
+            if (phone in checkedNumbers) {
                 return false
             }
             if (human == name) {
