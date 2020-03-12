@@ -21,8 +21,8 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
     Comparable<DimensionalValue> {
 
     companion object {
-        private val prefixValues = DimensionPrefix.values().map { it to it.multiplier }
-        private val dimensionAbbreviation = Dimension.values().map { it to it.abbreviation }
+        private val prefixValues = DimensionPrefix.values().map { it.multiplier to it }
+        private val dimensionAbbreviation = Dimension.values().map { it.abbreviation to it }
         private val dimensions = getDimensions()
         private val prefixes = getPrefixes().joinToString(separator = "")
 
@@ -37,11 +37,10 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
                 k.drop(1)
         }
 
-
         private fun getPrefixes(): MutableSet<String> {
             val dim = mutableSetOf<String>()
-            for ((first) in prefixValues) {
-                dim.add(first.abbreviation)
+            for ((_, second) in prefixValues) {
+                dim.add(second.abbreviation)
             }
             return dim
         }
@@ -49,22 +48,20 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
         private fun fetchDimensionName(k: String): Dimension {
             val a = fetchDimension(k)
             require(a in dimensions)
-            for ((first) in dimensionAbbreviation) {
-                if (a == first.abbreviation)
-                    return first
+            for ((_, second) in dimensionAbbreviation) {
+                if (a == second.abbreviation)
+                    return second
             }
             throw IllegalArgumentException()
         }
 
-
         private fun getDimensions(): MutableSet<String> {
             val dim = mutableSetOf<String>()
-            for (dimension in dimensionAbbreviation) {
-                dim.add(dimension.second)
+            for ((first) in dimensionAbbreviation) {
+                dim.add(first)
             }
             return dim
         }
-
 
         private fun valueDeterminant(s: String): Double {
             require(s.matches(Regex("""-?\d+(\.\d+)? [A-Za-z]+""")))
@@ -81,8 +78,8 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
 
         private fun fetchMultiplier(k: String): Double {
             for ((first, second) in prefixValues) {
-                if (k == first.abbreviation)
-                    return second
+                if (k == second.abbreviation)
+                    return first
             }
             return 1.0
         }
