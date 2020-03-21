@@ -61,13 +61,10 @@ class PhoneBook {
 
     fun addPhone(name: String, phone: String): Boolean {
         require(name.matches(nameTemplate) && !phone.contains(phoneRestrictions))
-        val checkedNumbers = book.values.flatten().toSet()
-        if (name !in book || phone in checkedNumbers) return false
-        for (human in book.keys) {
-            if (human == name) {
-                book[name] = book[name]!! + phone
-                return true
-            }
+        if (book.values.any { phone in it }) return false
+        if (book[name] != null) {
+            book[name] = book[name]!! + phone
+            return true
         }
         return false
     }

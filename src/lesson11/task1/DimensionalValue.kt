@@ -75,14 +75,6 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
             require(fetchPrefix(dimension) in prefixes)
             return dimension
         }
-
-        private fun fetchMultiplier(k: String): Double {
-            for ((first, second) in prefixValues) {
-                if (k == second.abbreviation)
-                    return first
-            }
-            return 1.0
-        }
     }
 
     /**
@@ -91,7 +83,7 @@ class DimensionalValue(private val actualValue: Double, private val actualDimens
     val value: Double
         get() {
             return if (actualDimension in dimensions) actualValue
-            else actualValue * fetchMultiplier(fetchPrefix(actualDimension))
+            else actualValue * DimensionPrefix.values().find { fetchPrefix(actualDimension) == it.abbreviation }!!.multiplier
         }
 
     /**
